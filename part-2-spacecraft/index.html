@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Asteroid Watch | Design and Assemble a Spacecraft</title>
+<meta name="description" content="An interactive DART-inspired spacecraft builder with NASA-sourced components and a live five-axis performance radar." />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--bg:#080f16;--panel:#111e24;--panel2:#172a2e;--line:#304449;--ink:#eaf5e9;--muted:#a6bcb4;--lime:#b9f16e;--mint:#7fd6bb;--gold:#f4c579;--danger:#ee947f;--mono:'DM Mono',ui-monospace,monospace;--sans:Manrope,system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);background-image:linear-gradient(#14242b55 1px,transparent 1px),linear-gradient(90deg,#14242b55 1px,transparent 1px);background-size:42px 42px;color:var(--ink);font-family:var(--sans)}button,a{font:inherit}button{cursor:pointer}a{color:#c5f19b}button:focus-visible,a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+[hidden] { display: none !important; }
+@scope (#design) {
+.mono,.eyebrow{font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#a2b7b0}.muted{color:var(--muted)}.shell{max-width:1550px;margin:auto;padding:0 4.3% 42px}.site-head{background:#101b22;border-bottom:3px solid #b6e879;box-shadow:0 9px 28px #0008}.head-inner{max-width:1550px;margin:auto;padding:17px 4.3%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:800;letter-spacing:.14em;font-size:13px;display:flex;align-items:center;gap:10px}.brand-mark{display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--lime);border-radius:50%;color:var(--lime);font-size:19px}.head-right{font:10px var(--mono);color:#9bb3ac;letter-spacing:.1em}.head-right a{color:#bdd8c4;text-decoration:none;border-bottom:1px solid #6a8b79;padding-bottom:3px}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:16px;padding:29px 0 17px}.hero h1{font-size:clamp(30px,4vw,51px);line-height:1.08;letter-spacing:-.05em;margin:8px 0}.hero p{font-size:13px;line-height:1.7;margin:7px 0;color:var(--muted);max-width:670px}.hero-chips{display:flex;flex-direction:column;gap:7px;align-items:flex-end}.chip{white-space:nowrap;border:1px solid #48624d;border-radius:7px;padding:8px 11px;background:#1e332d;color:#dbf7c2;font:10px var(--mono)}.stages{display:flex;gap:20px;margin:5px 0 20px;flex-wrap:wrap}.stages span{font:10px var(--mono);color:#738b84}.stages span:before{content:'● ';color:#5f786e}.stages .active{color:var(--lime)}.stages .active:before{color:var(--lime)}
+.grid{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.02fr) minmax(285px,.95fr);gap:15px;align-items:start}.panel{background:linear-gradient(155deg,#14242b,#101c22);border:5px solid #35454a;border-radius:10px;box-shadow:0 13px 0 #17252a,0 24px 39px #0007;overflow:hidden;min-width:0}.panel-head{padding:17px 19px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-head h2{font-size:15px;margin:3px 0 0}.step-tag{color:#132214;background:var(--lime);border-radius:5px;font:700 10px var(--mono);padding:6px 9px}.section-body{padding:18px}.instruction{font-size:12px;color:#b4c8be;line-height:1.65;margin:0 0 14px}.category-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:17px}.cat-btn{background:#0d1a20;color:#c0d0ca;border:1px solid #354e4b;border-radius:7px;padding:12px 4px;display:grid;gap:5px;justify-items:center;font-size:10px;transition:.16s}.cat-btn:hover{background:#203a34}.cat-btn[aria-selected=true]{border-color:var(--lime);background:#263d30;color:var(--lime)}.cat-btn .symbol{font-size:18px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}.part{background:#102126;border:1px solid #35504c;color:var(--ink);border-radius:9px;text-align:left;min-height:172px;padding:12px;display:flex;flex-direction:column;gap:6px;transition:.16s}.part:hover{border-color:#9be0a4;background:#1b342f}.part[aria-pressed=true]{border:2px solid var(--lime);padding:11px;background:#244034;box-shadow:inset 0 1px #ffffff17}.part .part-top{display:flex;justify-content:space-between;gap:5px;align-items:start}.part strong{font-size:12px;line-height:1.3}.part .check{color:var(--lime);font-size:14px}.part small{font:9px var(--mono);color:#9ebaae}.part p{font-size:10px;line-height:1.55;color:#c0d3c8;margin:1px 0}.part .spec{margin-top:auto;color:#d2efb2;font:9px var(--mono);line-height:1.5}.source-key{color:#e8c78e;font:9px var(--mono)}
+.selected-stack{margin-top:16px;padding:12px;background:#09181d;border:1px solid #304741;border-radius:9px}.selected-stack .line{display:flex;justify-content:space-between;gap:15px;border-bottom:1px solid #233a34;padding:8px 0;font-size:11px}.selected-stack .line:last-child{border:0}.selected-stack .line span{color:#9cafaa}.selected-stack .line b{text-align:right;font-weight:600}.preview{padding:19px 18px 15px;background:radial-gradient(ellipse at 50% 40%,#214747 0%,#15262b 45%,#0a1722 100%);border-bottom:1px solid #35494a;position:relative;min-height:325px}.preview:before{content:'';position:absolute;inset:0;background-image:radial-gradient(#c8ded6 1px,transparent 1px);background-size:39px 50px;opacity:.13;pointer-events:none}.preview-top{position:relative;display:flex;justify-content:space-between;gap:10px;z-index:1}.preview svg{position:relative;display:block;width:100%;height:auto;max-height:280px;filter:drop-shadow(0 18px 26px #0009)}.preview-bottom{position:relative;display:flex;justify-content:space-between;gap:10px;font:9px var(--mono);color:#c1d7cb;letter-spacing:.05em}.preview-bottom .live{color:var(--lime)}.spacecraft-label{font:9px var(--mono);fill:#c6dacd;letter-spacing:.08em}.mission-brief{padding:17px 19px}.brief-title{font-size:14px;font-weight:800;margin:5px 0 10px}.mission-brief p{font-size:11px;line-height:1.7;color:#b9ccc1;margin:5px 0}.readiness{border:1px solid #48664d;background:#1c3429;padding:11px 12px;border-radius:8px;margin:13px 0;color:#c9edba;font-size:12px;font-weight:700}.readiness.warn{border-color:#826543;background:#3b2e24;color:#f1ce97}.readiness.error{border-color:#855044;background:#3e2826;color:#f6b2a5}.checks{font-size:10px;line-height:1.7;color:#b2c5b9}.note{font-size:10px;color:#8fa8a0;line-height:1.6}
+.radar-wrap{padding:12px 12px 4px}.radar-wrap svg{display:block;width:100%;height:auto}.radar-axis{fill:#d1e6d6;font-size:11px;font-family:var(--sans);font-weight:700}.radar-num{fill:#a7bdad;font-size:9px;font-family:var(--mono)}.legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font:10px var(--mono);color:#abbeb0;margin-bottom:7px}.swatch{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:5px}.performance{padding:12px 16px 17px;border-top:1px solid #2c4341}.performance-row{border-bottom:1px solid #283f3d;padding:10px 0;display:grid;grid-template-columns:1fr auto;align-items:start;gap:6px 12px}.performance-row:last-child{border:0}.performance-row strong{font-size:11px}.performance-row .numbers{text-align:right;color:var(--lime);font:12px var(--mono)}.performance-row .raw{grid-column:1/-1;color:#9aaca7;font-size:10px;line-height:1.5}.performance-row .meter{grid-column:1/-1;background:#243935;height:5px;border-radius:5px;overflow:hidden}.performance-row .meter i{display:block;height:100%;background:var(--lime);border-radius:5px;transition:width .28s}.scores-notice{padding:10px 15px;margin:0 15px 17px;border:1px solid #675c42;background:#312b20;color:#dfcda7;border-radius:7px;font-size:10px;line-height:1.65}.science{margin:38px 0 5px;padding:18px 20px;border:1px solid #3f5650;border-radius:9px;background:#102027}.science summary{color:#d0eab7;font-size:12px;font-weight:700;cursor:pointer}.science p,.science li{font-size:11px;line-height:1.8;color:#b8c8bf}.science ul{padding-left:18px}.science a{color:#b9f16e;overflow-wrap:anywhere}.science strong{color:#e3efde}footer{margin-top:19px;text-align:right;font:10px var(--mono);color:#708980}
+@media(max-width:1200px){.grid{grid-template-columns:minmax(290px,1fr) minmax(290px,1fr)}.result-panel{grid-column:1/-1}.result-panel .two{display:grid;grid-template-columns:minmax(290px,.85fr) minmax(290px,1fr)}.performance{border-top:0;border-left:1px solid #2c4341}}@media(max-width:700px){.shell{padding:0 3% 35px}.head-inner{padding:14px 3%}.head-right{display:none}.hero{display:block}.hero-chips{align-items:flex-start;flex-direction:row;flex-wrap:wrap;margin:16px 0 0}.grid{grid-template-columns:1fr}.result-panel{grid-column:auto}.result-panel .two{grid-template-columns:1fr}.performance{border-top:1px solid #2c4341;border-left:0}.preview{min-height:0}.panel{border-width:3px}}@media(max-width:400px){.choices{grid-template-columns:1fr}.part{min-height:130px}.cat-btn{padding:10px 2px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+}
+@scope (#assembly) {
+.mono,.eyebrow{font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#a2b7b0}
+.site-head{background:#101b22;border-bottom:3px solid #b6e879;box-shadow:0 9px 28px #0008}.head-inner{max-width:1500px;margin:auto;padding:17px 4.3%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:800;letter-spacing:.14em;font-size:13px;display:flex;align-items:center;gap:10px}.brand-mark{display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--lime);border-radius:50%;color:var(--lime);font-size:19px}.head-right{font:10px var(--mono);color:#9bb3ac;letter-spacing:.1em}.head-right a{color:#bdd8c4;text-decoration:none;border-bottom:1px solid #6a8b79;padding-bottom:3px}
+.shell{max-width:1500px;margin:auto;padding:29px 4.3% 44px}.hero{display:flex;align-items:end;justify-content:space-between;gap:14px}.hero h1{font-size:clamp(31px,4vw,52px);line-height:1.1;letter-spacing:-.055em;margin:8px 0}.hero p{color:var(--muted);font-size:13px;line-height:1.7;max-width:650px;margin:0}.chip{border:1px solid #48624d;border-radius:7px;padding:9px 12px;background:#1e332d;color:#dbf7c2;font:10px var(--mono);white-space:nowrap}.stages{display:flex;gap:20px;flex-wrap:wrap;margin:19px 0 20px}.stages span{font:10px var(--mono);color:#738b84}.stages span:before{content:'● ';color:#5f786e}.stages .active{color:var(--lime)}.stages .active:before{color:var(--lime)}
+.panel{background:linear-gradient(155deg,#14242b,#101c22);border:5px solid #35454a;border-radius:10px;box-shadow:0 13px 0 #17252a,0 24px 39px #0007;overflow:hidden}.panel-head{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.panel-head h2{font-size:15px;margin:4px 0 0}.step-tag{color:#132214;background:var(--lime);border-radius:5px;font:700 10px var(--mono);padding:6px 9px}.statusbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 22px;background:#0b1a1f;border-bottom:1px solid #28433a}.statusbar strong{font:13px var(--mono);color:var(--lime)}.statusbar .track{flex:1;max-width:340px;height:7px;border-radius:12px;background:#284238;overflow:hidden}.statusbar .fill{height:100%;width:0;background:var(--lime);border-radius:12px;transition:width .28s}.statusbar .hint{font:10px var(--mono);color:#adc4b8}
+.assembly-field{position:relative;isolation:isolate;height:650px;background:radial-gradient(ellipse at 50% 47%,#1e4946,#102631 49%,#07131f 85%);overflow:hidden}.assembly-field:before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(#c8ded6 1px,transparent 1px);background-size:43px 49px;opacity:.16}.assembly-field:after{content:"WORKSHOP CAMERA  02  /  ASSEMBLY FEED";position:absolute;right:19px;top:18px;font:10px var(--mono);letter-spacing:.09em;color:#a5c3b2;pointer-events:none}.frame-title{position:absolute;top:19px;left:22px;font:10px var(--mono);letter-spacing:.12em;color:var(--lime);z-index:2}.frame-caption{position:absolute;bottom:16px;left:22px;font:10px var(--mono);letter-spacing:.12em;color:#98aea9;z-index:2}
+.ship-visual{position:absolute;left:50%;top:50%;width:min(59%,640px);max-height:90%;aspect-ratio:680/460;transform:translate(-50%,-50%);z-index:1;overflow:visible;filter:drop-shadow(0 15px 24px #0007)}.ship-visual .socket-ring{stroke:#b9f16e;fill:#b9f16e0d;stroke-width:2;stroke-dasharray:6 6;animation:signal 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center;transition:.2s}.ship-visual .socket-icon{font:700 10px var(--mono);fill:#c8e4b5;text-anchor:middle;letter-spacing:.05em}.ship-visual .socket-label{font:9px var(--mono);fill:#a6c1b0;text-anchor:middle}.ship-visual .socket.active .socket-ring{fill:#b9f16e33;stroke:#d9ff9f;stroke-width:4;stroke-dasharray:none;filter:drop-shadow(0 0 8px #b9f16ecc)}.ship-visual .socket.done{opacity:0;pointer-events:none}.ship-visual .installed-module{opacity:0;transform:translateY(6px);transition:opacity .22s,transform .22s;pointer-events:none}.ship-visual .installed-module.on{opacity:1;transform:translateY(0)}.ship-visual .stars circle{fill:#cfebe2;opacity:.4}.ship-visual .bus-number{font:9px var(--mono);fill:#e1d3a1}.ship-visual .guide-line{stroke:#507e70;stroke-width:1.4;stroke-dasharray:5 7;fill:none}.ship-visual .arm{stroke:#8faaaa;stroke-width:8;stroke-linecap:round}.ship-visual .gridline{stroke:#92c4e2;stroke-width:1.5;opacity:.43}@keyframes signal{50%{opacity:.42}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.module-rack{display:contents}.module-card{position:absolute;z-index:3;display:flex;gap:12px;align-items:center;width:202px;min-height:116px;border:1px solid #49625d;border-radius:11px;background:linear-gradient(145deg,#1d3638eF,#112328f5);box-shadow:0 12px 30px #0007;color:#eaf5e9;padding:12px;text-align:left;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab;transition:border-color .18s,opacity .22s,transform .2s}.module-card:hover,.module-card:focus-visible{border-color:var(--lime);box-shadow:0 15px 30px #0008,0 0 0 1px #a6e06d3d}.module-card:active{cursor:grabbing}.module-card .symbol{flex:none;width:55px;height:60px;display:grid;place-items:center;border:1px solid #476660;border-radius:8px;background:#0a1c25}.module-card .symbol svg{width:49px;height:53px}.module-card .name{font-weight:800;font-size:11px;line-height:1.35}.module-card .category{color:var(--lime);font:9px var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.module-card small{display:block;margin-top:6px;font:9px var(--mono);line-height:1.35;color:#9fbdaf}.module-card .check{display:none;color:var(--lime);font:10px var(--mono);margin-top:5px}.module-card.done{opacity:.5;border-color:#3b5b4b;cursor:default}.module-card.done .check{display:block}.module-card.done small{display:none}.module-card.dragging{opacity:.24}.module-card[data-part=camera]{left:28px;top:88px}.module-card[data-part=solar]{left:28px;bottom:76px}.module-card[data-part=antenna]{right:28px;top:88px}.module-card[data-part=thruster]{right:28px;bottom:76px}.drag-proxy{position:fixed!important;left:0!important;top:0!important;bottom:auto!important;right:auto!important;width:188px!important;z-index:9999!important;opacity:.92!important;pointer-events:none!important;transform:translate(-50%,-50%) rotate(-3deg);box-shadow:0 20px 55px #000b!important;border-color:var(--lime)!important}
+.bottom{padding:17px 22px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:#101c22;border-top:1px solid var(--line)}.bottom .message{font-size:12px;color:#c9dcd1;line-height:1.55}.bottom .message strong{color:var(--lime)}.btn{background:#b9f16e;color:#142014;border:0;border-radius:7px;padding:11px 16px;font-weight:800;font-size:12px;box-shadow:0 4px 0 #608745}.btn.secondary{background:#14252b;color:#d9e8e0;border:1px solid #567268;box-shadow:none}.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.38;cursor:default;filter:none}.footer-note{margin-top:19px;font-size:11px;line-height:1.75;color:#9fb6ac}.footer-note a{color:#c7e9b0}.completion{color:var(--lime)!important}.live{position:absolute;right:20px;bottom:16px;color:var(--lime);font:10px var(--mono)}
+@media(max-width:1000px){.assembly-field{height:585px}.ship-visual{width:min(65%,620px)}.module-card{width:165px;min-height:100px;padding:9px;gap:7px}.module-card .symbol{width:40px;height:50px}.module-card .symbol svg{width:38px;height:42px}.module-card[data-part=camera],.module-card[data-part=solar]{left:13px}.module-card[data-part=antenna],.module-card[data-part=thruster]{right:13px}.module-card .name{font-size:10px}}
+@media(max-width:700px){.head-right{display:none}.shell{padding:24px 3%}.hero{display:block}.hero .chip{display:inline-block;margin-top:12px}.panel{border-width:3px}.assembly-field{height:auto;min-height:665px;padding-bottom:19px}.ship-visual{position:relative;top:auto;left:auto;transform:none;display:block;margin:26px auto 4px;width:min(98%,570px);max-height:none}.module-rack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 13px}.module-card,.module-card[data-part=camera],.module-card[data-part=solar],.module-card[data-part=antenna],.module-card[data-part=thruster]{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:auto;min-height:100px}.assembly-field:after{display:none}.frame-title{position:relative;display:block;top:auto;left:auto;margin:16px 16px 0}.frame-caption{position:relative;display:block;bottom:auto;left:auto;margin:14px 15px 0}.live{position:relative;right:auto;bottom:auto;margin:10px 15px;display:block}.module-card .symbol{width:37px;height:46px}.module-card .symbol svg{width:35px;height:39px}.bottom{flex-wrap:wrap}.statusbar .hint{display:none}}
+@media(max-width:420px){.module-rack{gap:7px}.module-card{padding:8px;gap:7px}.module-card .symbol{width:33px;height:39px}.module-card .symbol svg{width:31px;height:35px}.module-card .name{font-size:10px}.module-card small{font-size:8px}.hero h1{font-size:31px}}
+.assembly-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (min-width: 701px) { #editDesign { display: none; } }
+}
+</style>
+</head>
+<body>
+<div id="design">
+<header class="site-head"><div class="head-inner"><div class="brand"><span class="brand-mark">✳</span> ASTEROID WATCH</div><div class="head-right">PLANETARY DEFENSE / TRAINING SIMULATION &nbsp; <a href="../observation-mvp.html">← OBSERVATION LAB</a></div></div></header>
+<main class="shell">
+<section class="hero"><div><div class="eyebrow" style="color:var(--lime)">● MISSION 02 / SPACECRAFT ENGINEERING</div><h1>Build the Impactor.</h1><p>Your team has identified a possible asteroid threat. Select real space-mission technology, build a DART-inspired spacecraft, and study how each engineering choice changes its performance.</p></div><div class="hero-chips"><span class="chip">4 SYSTEMS</span><span class="chip">14 REAL TECHNOLOGIES</span><span class="chip">144 DESIGN COMBINATIONS</span></div></section>
+<nav class="stages" aria-label="Mission stages"><span>01 ASTEROID INVESTIGATION</span><span class="active">02 SPACECRAFT DESIGN</span><span>03 INTERCEPT & TEST</span></nav>
+<div class="grid">
+<section class="panel" aria-labelledby="builderHeading"><div class="panel-head"><div><div class="eyebrow">ENGINEERING WORKBENCH</div><h2 id="builderHeading">Choose your hardware</h2></div><span class="step-tag">STEP 02</span></div><div class="section-body"><p class="instruction">Choose one component from each category. Watch the spacecraft and its five performance scores change as you experiment.</p><div class="category-tabs" id="tabs" role="tablist" aria-label="Hardware systems"></div><div class="choices" id="choices" role="group" aria-label="Hardware options"></div><div class="selected-stack"><div class="eyebrow">CURRENT SPACECRAFT CONFIGURATION</div><div id="summary"></div></div></div></section>
+<section class="panel"><div class="panel-head"><div><div class="eyebrow">ASSEMBLY BAY / LIVE PREVIEW</div><h2>Your DART-inspired spacecraft</h2></div><span class="step-tag">BUILD 01</span></div><div class="preview"><div class="preview-top"><span class="eyebrow" style="color:var(--lime)">● SYSTEMS ONLINE</span><span class="eyebrow">MODEL / NOT TO SCALE</span></div><svg id="shipSvg" viewBox="0 0 520 340" role="img" aria-label="Stylized assembled spacecraft with selected solar panels, camera, thruster and antenna">
+<defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe39c"/><stop offset=".52" stop-color="#bb9e50"/><stop offset="1" stop-color="#554827"/></linearGradient><linearGradient id="panelBlue"><stop stop-color="#3b6f8b"/><stop offset=".55" stop-color="#183b5e"/><stop offset="1" stop-color="#0a2446"/></linearGradient><radialGradient id="lens"><stop stop-color="#9cf6e9"/><stop offset=".4" stop-color="#307e9c"/><stop offset="1" stop-color="#111d30"/></radialGradient></defs>
+<ellipse cx="260" cy="174" rx="215" ry="104" transform="rotate(-12 260 174)" stroke="#9edbc0" stroke-width="1.5" stroke-dasharray="6 9" stroke-opacity=".37" fill="none"/>
+<g id="solarArt"></g><g id="antennaArt"></g><g id="thrusterArt"></g>
+<g id="bus"><path d="M205 131 L283 104 L346 143 L269 168 Z" fill="#e4c172" stroke="#f5dda4" stroke-width="2"/><path d="M205 131 L269 168 L269 247 L205 210Z" fill="#9f8446" stroke="#d9b66e" stroke-width="2"/><path d="M269 168 L346 143 L346 218 L269 247Z" fill="url(#gold)" stroke="#f4dba1" stroke-width="2"/><path d="M218 148 L252 165 L252 219 L218 201Z" fill="#806d46" stroke="#eed288"/><path d="M284 178 L328 164 L328 209 L284 225Z" fill="#c7a955" stroke="#fae8ab"/><path d="M289 182 L319 173 M289 196 L319 186 M289 209 L319 199" stroke="#796538" stroke-width="2"/><circle cx="280" cy="233" r="5" fill="#a4edb6"/></g>
+<g id="cameraArt"></g>
+<text x="25" y="46" class="spacecraft-label">ASTEROID WATCH · SPACECRAFT ASSEMBLY</text><text x="25" y="313" class="spacecraft-label" id="shipTag">DART-INSPIRED / CONFIGURATION 001</text>
+</svg><div class="preview-bottom"><span>⊕ EARTH ORBITAL DEFENSE</span><span class="live">● DESIGN SIMULATION</span></div></div><div class="mission-brief"><div class="eyebrow">MISSION READINESS</div><div class="brief-title" id="statusTitle">Evaluating design...</div><div id="status" class="readiness">Checking requirements...</div><div id="checklist" class="checks"></div><p class="note">The spacecraft image is a stylized illustration. The feasibility checks use an educational planning model, with published NASA reference values wherever available.</p></div></section>
+<section class="panel result-panel"><div class="panel-head"><div><div class="eyebrow">LIVE PERFORMANCE / 0–100 POINTS</div><h2>Five-axis radar</h2></div><span class="step-tag">LIVE</span></div><div class="two"><div class="radar-wrap"><svg id="radar" viewBox="0 0 390 330" role="img" aria-label="Live five-axis radar chart for Mass, Power Margin, Targeting Ability, Course Correction, Data Return"></svg><div class="legend"><span><i class="swatch" style="background:var(--lime)"></i>Current design</span><span><i class="swatch" style="background:#809d98"></i>Previous selection</span></div></div><div class="performance" id="performance" aria-live="polite"></div></div><p class="scores-notice"><strong>Educational model:</strong> Radar values are normalized 0–100 <em>points</em>, not percentages, measured probabilities, or NASA-certified performance. Click “Science notes & sources” below to see published inputs and explicit assumptions.</p></section>
+</div>
+<section class="assembly-continue" style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin:24px 0 10px;padding:18px 20px;background:#152923;border:1px solid #496e52;border-radius:10px;flex-wrap:wrap"><div><div class="eyebrow" style="color:var(--lime)">NEXT STEP · PHYSICAL ASSEMBLY</div><div style="font-size:16px;font-weight:800;margin:6px 0">Ready to put the spacecraft together?</div><div style="font-size:11px;color:var(--muted)">Keep your four selected components and drag them onto the spacecraft bus.</div></div><button type="button" id="goAssembly" style="background:var(--lime);color:#142014;border:0;border-radius:7px;padding:13px 18px;font-weight:800;font-size:12px">Continue to assembly →</button></section>
+<section class="science"><details><summary>Science notes & sources — how the performance model works ↗</summary><p>This educational builder adapts technologies from different NASA missions. They were designed for different spacecraft, so installation compatibility is <strong>assumed for the game</strong>. Hardware names and indicated published technical specifications come from NASA/mission documentation. When mass, power or other data are unavailable, the calculator uses values clearly marked <strong>MODEL ASSUMPTION</strong>.</p>
+<ul><li><strong>Mission assumptions:</strong> fixed reference bus = 350 kg; bus operating power = 45 W; launch-mass planning cap = 750 kg; asteroid diameter = 150 m; camera range = 100 km; solar distance = 1 AU; available powered cruise = 90 days. These are hypothetical instructional settings, not the DART mission configuration.</li><li><strong>Mass:</strong> summed bus, selected equipment, and propulsion fuel; impact mass subtracts modeled propellant consumption. The mass radar score compares impact mass to a 750 kg planning scale, while launch feasibility is checked separately.</li><li><strong>Power Margin:</strong> nominal array output at 1 AU minus selected equipment demand in the powered-cruise mode. Lucy solar output is extrapolated from its distant-sun 504 W specification using ideal inverse-square illumination; this does not include degradation, thermal limits or electrical-bus caps.</li><li><strong>Targeting:</strong> geometric target size in pixels = asteroid diameter / (range × camera IFOV). A documented educational index combines image detail and field of view. It does <strong>not</strong> represent hit probability, optical sensitivity, signal-to-noise ratio or a validated autonomy system.</li><li><strong>Course Correction:</strong> hydrazine baseline based on DART's 55.2 m/s total reported dV99, scaled approximately by spacecraft mass. Electric propulsion uses published reference thrust/specific impulse and an assumed 90-day powered cruise with a simple rocket-equation calculation. Actual transfers, thrust schedules and rendezvous trajectories are outside this model.</li><li><strong>Data Return:</strong> uses each original mission's published link-rate benchmark as an educational index; distances, frequencies, ground station capabilities and transmitter powers differ. The score is <strong>not</strong> a cross-mission link-budget prediction.</li><li><strong>Normalization:</strong> five axes are a visual teaching tool for comparing designs under one set of assumptions, not a NASA performance certification. An Earth-impact avoidance verdict requires validated intercept and orbital-deflection modeling and is intentionally absent here.</li></ul>
+<p><strong>NASA and mission references:</strong><br>
+<a href="https://ntrs.nasa.gov/citations/20230015804" target="_blank" rel="noopener">NASA · Final DART Technical Report</a> ·
+<a href="https://doi.org/10.3847/psj/ad823a" target="_blank" rel="noopener">DART · DRACO camera measurements</a> ·
+<a href="https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn%3Anasa%3Apds%3Acontext%3Ainstrument%3Aocams.orex&version=1.2" target="_blank" rel="noopener">NASA PDS · OSIRIS-REx cameras</a> ·
+<a href="https://science.nasa.gov/mission/lucy/spacecraft/" target="_blank" rel="noopener">NASA · Lucy spacecraft</a> ·
+<a href="https://science.nasa.gov/mission/dawn/technology/spacecraft/" target="_blank" rel="noopener">NASA · Dawn spacecraft</a> ·
+<a href="https://www.nasa.gov/smallsat-institute/sst-soa/power-subsystems/" target="_blank" rel="noopener">NASA · Small spacecraft solar technology</a> ·
+<a href="https://ntrs.nasa.gov/api/citations/20210024276/downloads/NEXT-C_FactSheet_11_1_21_rev4%20%281%29.pdf" target="_blank" rel="noopener">NASA · NEXT-C propulsion</a> ·
+<a href="https://science.nasa.gov/mission/roman-space-telescope/communications/" target="_blank" rel="noopener">NASA · Roman communications</a>.</p>
+</details></section>
+<footer>ASTEROID WATCH · EDUCATIONAL MISSION DESIGN / 2026</footer>
+</main>
+</div>
+<div id="assembly" hidden></div>
+<template id="assemblyTemplate">
+<header class="site-head"><div class="head-inner"><div class="brand"><span class="brand-mark">✳</span> ASTEROID WATCH</div><div class="head-right">PLANETARY DEFENSE / TRAINING SIMULATION &nbsp; <a href="#design" id="backToDesign">← BACK TO DESIGN</a></div></div></header>
+<main class="shell">
+ <section class="hero"><div><div class="eyebrow" style="color:var(--lime)">● MISSION 02 / SPACECRAFT ASSEMBLY</div><h1 tabindex="-1">Assemble the Impactor.</h1><p>Your spacecraft design is ready. Drag each of the four prepared modules into its glowing mounting point. Watch the systems click into place.</p></div><span class="chip">NO MORE HARDWARE CHOICES</span></section>
+ <nav class="stages" aria-label="Mission stages"><span>01 ASTEROID INVESTIGATION</span><span>02 DESIGN LAB</span><span class="active">03 SPACECRAFT ASSEMBLY</span><span>04 INTERCEPT & TEST</span></nav>
+ <section class="panel" aria-label="Spacecraft assembly workbench">
+  <div class="panel-head"><div><div class="eyebrow">ENGINEERING WORKSHOP / FINAL FITTING</div><h2>Attach all four modules to the spacecraft bus</h2></div><span class="step-tag">ASSEMBLY</span></div>
+  <div class="statusbar"><strong id="progressLabel">00 / 04 INSTALLED</strong><div class="track" aria-label="Assembly progress"><div class="fill" id="progressFill"></div></div><span class="hint">DRAG TO MATCHING SOCKET · OR TAP A PART</span></div>
+  <div class="assembly-field" id="assemblyField">
+   <div class="frame-title">● SPACECRAFT BUS / INSTALLATION MODE</div>
+   <svg id="ship" class="ship-visual" viewBox="0 0 680 460" role="img" aria-label="Central spacecraft bus with four empty attachment points: camera, solar arrays, thruster, and antenna">
+    <defs>
+      <linearGradient id="assembly-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9de92"/><stop offset=".52" stop-color="#c09b4c"/><stop offset="1" stop-color="#70572a"/></linearGradient>
+      <linearGradient id="bluePanel" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#30799a"/><stop offset=".55" stop-color="#184767"/><stop offset="1" stop-color="#0a274a"/></linearGradient>
+      <radialGradient id="assembly-lens"><stop stop-color="#a0eee4"/><stop offset=".45" stop-color="#3d9bb1"/><stop offset="1" stop-color="#0a1d34"/></radialGradient>
+      <radialGradient id="halo"><stop stop-color="#74e2c42e"/><stop offset="1" stop-color="#74e2c400"/></radialGradient>
+    </defs>
+    <circle cx="335" cy="235" r="230" fill="url(#halo)"/>
+    <g class="stars"><circle cx="64" cy="64" r="1"/><circle cx="615" cy="93" r="1.3"/><circle cx="572" cy="371" r="1"/><circle cx="98" cy="351" r="1"/><circle cx="420" cy="59" r="1.5"/></g>
+    <circle cx="336" cy="237" r="168" fill="none" stroke="#376a62" stroke-opacity=".42" stroke-dasharray="3 9"/>
+    <!-- Ghost outlines show where components belong -->
+    <g opacity=".19" stroke="#b9f16e" stroke-width="2.5" stroke-dasharray="6 5" fill="none" pointer-events="none">
+     <path d="M253 237H120V194H92V279H120V237 M395 237H528V194H556V279H528V237"/>
+     <path d="M323 179V118H346V179"/><circle cx="334" cy="110" r="21"/>
+     <path d="M383 195L435 136"/><ellipse cx="457" cy="122" rx="33" ry="18"/>
+     <path d="M298 309L282 355L321 355L322 315 M358 309L353 355L392 355L379 309"/>
+    </g>
+    <!-- Installed arrays, including both symmetrical wings, form one module -->
+    <g class="installed-module" id="part-solar">
+     <path d="M252 232H204 M388 232H435" class="arm"/>
+     <g id="arrayShapes"><rect x="84" y="190" width="120" height="86" rx="3" fill="url(#bluePanel)" stroke="#edc776" stroke-width="4"/><rect x="436" y="190" width="120" height="86" rx="3" fill="url(#bluePanel)" stroke="#edc776" stroke-width="4"/>
+      <path d="M108 190V276 M132 190V276 M156 190V276 M180 190V276 M84 219H204 M84 248H204 M460 190V276 M484 190V276 M508 190V276 M532 190V276 M436 219H556 M436 248H556" class="gridline"/></g>
+    </g>
+    <!-- Central bus remains present throughout assembly -->
+    <g id="baseBus">
+      <path d="M254 185L336 154L389 189L309 219Z" fill="#dfc174" stroke="#fff0ba" stroke-width="3"/>
+      <path d="M254 185L309 219V320L254 282Z" fill="#9a7d42" stroke="#dfc37a" stroke-width="3"/>
+      <path d="M309 219L389 189V290L309 320Z" fill="url(#assembly-gold)" stroke="#efdb98" stroke-width="3"/>
+      <path d="M265 214L293 229V292L265 275Z" fill="#6e5b39" stroke="#dfc47c"/>
+      <path d="M320 233L376 212V270L320 290Z" fill="#af8945" stroke="#ffe7a4" stroke-width="2"/>
+      <path d="M324 243L373 226 M324 257L373 240 M324 273L373 257" stroke="#70572a" stroke-width="2"/>
+      <circle cx="321" cy="309" r="4" fill="#b9f16e"/><circle cx="381" cy="284" r="4" fill="#b9f16e"/>
+      <text x="338" y="203" class="bus-number">AW-01</text>
+    </g>
+    <!-- DRACO / other camera module -->
+    <g class="installed-module" id="part-camera"><path d="M318 170L318 124L335 109L354 123V170Z" fill="#aabac0" stroke="#e9f0db" stroke-width="3"/><ellipse cx="336" cy="113" rx="24" ry="18" fill="#bcc8c8" stroke="#e4e6d9" stroke-width="3"/><ellipse cx="336" cy="113" rx="15" ry="12" fill="url(#assembly-lens)" stroke="#617f8d" stroke-width="3"/><circle cx="332" cy="108" r="4" fill="#d2fffa" opacity=".8"/></g>
+    <!-- Antenna module -->
+    <g class="installed-module" id="part-antenna"><path d="M383 194L427 143" class="arm"/><path id="dishShape" d="M414 117Q453 156 499 100Q471 91 414 117Z" fill="#bac8bd" stroke="#edf3d6" stroke-width="3"/><path d="M448 125L471 107" stroke="#70867c" stroke-width="4"/><circle cx="455" cy="121" r="4" fill="#eaf7ed"/></g>
+    <!-- Thruster module -->
+    <g class="installed-module" id="part-thruster"><path d="M283 306L267 346L317 349L320 318Z M355 318L354 347L402 343L381 300Z" fill="#657985" stroke="#d8dfe1" stroke-width="2"/><path id="plume1" d="M271 349L259 395L300 352Z" fill="#ffca86" opacity=".84"/><path id="plume2" d="M360 347L356 390L388 345Z" fill="#ffd993" opacity=".7"/></g>
+    <!-- Active socket points -->
+    <g class="socket" data-socket="camera"><circle class="socket-ring" cx="335" cy="112" r="42"/><text class="socket-icon" x="335" y="106">CAMERA</text><text class="socket-label" x="335" y="120">01</text></g>
+    <g class="socket" data-socket="solar"><circle class="socket-ring" cx="210" cy="232" r="42"/><text class="socket-icon" x="210" y="227">SOLAR</text><text class="socket-label" x="210" y="241">02</text></g>
+    <g class="socket" data-socket="thruster"><circle class="socket-ring" cx="334" cy="365" r="42"/><text class="socket-icon" x="334" y="360">THRUSTER</text><text class="socket-label" x="334" y="374">03</text></g>
+    <g class="socket" data-socket="antenna"><circle class="socket-ring" cx="463" cy="125" r="42"/><text class="socket-icon" x="463" y="119">ANTENNA</text><text class="socket-label" x="463" y="133">04</text></g>
+   </svg>
+   <div class="module-rack" id="moduleRack">
+     <button type="button" class="module-card" data-part="camera" aria-label="Drag camera to CAMERA socket, or click to install"><span class="symbol"><svg viewBox="0 0 54 54" aria-hidden="true"><path d="M14 32V19L23 13H34L42 20V32Z" fill="#98aeb8" stroke="#e2eee5" stroke-width="2"/><ellipse cx="28" cy="22" rx="11" ry="8" fill="#142c3c" stroke="#b4e7df" stroke-width="3"/><circle cx="27" cy="21" r="4" fill="#74ddc6"/></svg></span><span><div class="category">01 / Imaging</div><div class="name" data-model="camera">DRACO</div><small>Drag to CAMERA</small><span class="check">✓ ATTACHED</span></span></button>
+     <button type="button" class="module-card" data-part="solar" aria-label="Drag solar arrays to SOLAR socket, or click to install"><span class="symbol"><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="3" y="17" width="20" height="20" fill="#275f88" stroke="#d7c884" stroke-width="2"/><rect x="31" y="17" width="20" height="20" fill="#275f88" stroke="#d7c884" stroke-width="2"/><path d="M13 17V37 M41 17V37 M3 27H23 M31 27H51" stroke="#9cd9e8"/><rect x="23" y="22" width="8" height="10" fill="#ddc06d"/></svg></span><span><div class="category">02 / Power</div><div class="name" data-model="solar">ROSA</div><small>Drag to SOLAR</small><span class="check">✓ ATTACHED</span></span></button>
+     <button type="button" class="module-card" data-part="thruster" aria-label="Drag thruster to THRUSTER socket, or click to install"><span class="symbol"><svg viewBox="0 0 54 54" aria-hidden="true"><path d="M12 15H42L38 31H16Z" fill="#8b9da5" stroke="#e6e8da" stroke-width="2"/><path d="M18 32L13 48L26 33 M35 32L30 47L40 32" fill="#a6e9ec" opacity=".8"/><path d="M20 19H34" stroke="#cddfda" stroke-width="2"/></svg></span><span><div class="category">03 / Flight Control</div><div class="name" data-model="thruster">NEXT-C</div><small>Drag to THRUSTER</small><span class="check">✓ ATTACHED</span></span></button>
+     <button type="button" class="module-card" data-part="antenna" aria-label="Drag antenna to ANTENNA socket, or click to install"><span class="symbol"><svg viewBox="0 0 54 54" aria-hidden="true"><path d="M9 13Q27 33 45 13Q38 9 9 13Z" fill="#b2c4bd" stroke="#e5f2db" stroke-width="2"/><path d="M26 22L26 45 M18 45H35 M27 23L37 13" stroke="#a3beb6" stroke-width="3"/><circle cx="36" cy="14" r="3" fill="#d9edd1"/></svg></span><span><div class="category">04 / Communications</div><div class="name" data-model="antenna">Lucy HGA</div><small>Drag to ANTENNA</small><span class="check">✓ ATTACHED</span></span></button>
+   </div>
+   <div class="frame-caption">DART-INSPIRED / ASSEMBLY VIEW · NOT TO SCALE</div><span class="live" id="liveState">● FOUR MOUNTS OPEN</span>
+  </div>
+  <div class="bottom"><div class="message" id="message" aria-live="polite">Drag a module to its <strong>matching glowing socket</strong>. You can also click a part to snap it into place.</div><div class="assembly-actions"><button type="button" class="btn secondary" id="editDesign">← Back to design</button> <button type="button" class="btn secondary" id="resetBtn">↺ Reset assembly</button></div></div>
+ </section>
+ <div class="footer-note">The four models were chosen in the previous design stage. This page is a hands-on assembly activity; equipment compatibility, power and trajectory calculations remain part of the design simulation. Visuals are simplified illustrations of a DART-inspired spacecraft. <a href="https://www.nasa.gov/wp-content/uploads/2023/08/pd-dart-fact-sheet.pdf" target="_blank" rel="noopener">NASA DART spacecraft reference ↗</a></div>
+</main>
+</template>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), clamp=(n,lo=0,hi=100)=>Math.min(hi,Math.max(lo,n));
+const sources={dart:'NASA DART Technical Report',ocams:'NASA OSIRIS-REx / OCAMS',lucy:'NASA Lucy spacecraft',dawn:'NASA Dawn spacecraft',power:'NASA 2026 SmallSat Power Catalog',next:'NASA NEXT-C fact sheet',roman:'NASA Roman communications'};
+const categories=[
+ {id:'camera',label:'Camera',icon:'◎',sub:'Navigation vision'},
+ {id:'power',label:'Solar',icon:'☼',sub:'Electrical power'},
+ {id:'propulsion',label:'Thruster',icon:'➤',sub:'Course changes'},
+ {id:'comms',label:'Antenna',icon:'⌁',sub:'Data transmission'}
+];
+// Values marked "assumed" are design allowances, NOT verified NASA measurements.
+const parts={
+ camera:[
+ {id:'draco',name:'DRACO',mission:'DART',kid:'A telescope camera that gives the onboard computer detailed pictures for asteroid tracking.',mass:9.55,power:4.95,ifov:2.47,fov:.29,real:'0.29° FOV · 2.47 μrad/pixel',assumed:[],detail:'NASA instrument mass 9.55 kg and active power 4.95 W; additional door, mounting and heating are excluded.'},
+ {id:'polycam',name:'PolyCam',mission:'OSIRIS-REx',kid:'A long-range telescope camera used to find an asteroid and map its surface while approaching.',mass:15,power:12,ifov:13.5,fov:.8,real:'0.8° FOV · 13.5 μrad/pixel',assumed:['mass','power'],detail:'Mass 15 kg and power 12 W are placeholder allowances; not published OCAMS component values.'},
+ {id:'mapcam',name:'MapCam',mission:'OSIRIS-REx',kid:'A wider-view camera with color filters that helps scientists compare areas of an asteroid.',mass:11,power:9,ifov:68,fov:4,real:'4° FOV · 68 μrad/pixel',assumed:['mass','power'],detail:'Mass 11 kg and power 9 W are placeholder allowances; no direct hit-accuracy benefit is implied.'},
+ {id:'llorri',name:'L’LORRI',mission:'Lucy',kid:'A narrow-view telescope camera that captures fine details of distant asteroid surfaces.',mass:12,power:10.6,ifov:5,fov:.29,real:'≈0.29° FOV · 5 μrad/pixel',assumed:[],detail:'Instrument mass and power are mission-published reference values.'}
+ ],
+ power:[
+ {id:'rosa',name:'ROSA',mission:'DART',kid:'Flexible solar wings that roll up for launch and unfold to collect sunlight in space.',mass:80,watts:4000,real:'DART mission: ≈4,000 W',assumed:['mass'],detail:'80 kg is an educational full-array mass allowance. 4 kW is the reported DART mission array benchmark.'},
+ {id:'dawn',name:'Dawn Solar Arrays',mission:'Dawn',kid:'Two large solar wings that provide electricity for the spacecraft and its ion engines.',mass:126,watts:10300,real:'≈10,300 W at 1 AU',assumed:[],detail:'Combined array mass and roughly 1-AU output are mission reference values.'},
+ {id:'lucy',name:'Lucy Solar Arrays',mission:'Lucy',kid:'Two large circular solar arrays designed to generate electricity far away from the Sun.',mass:176,watts:Math.round(504*5.7*5.7),real:'504 W at ≈5.7 AU',assumed:['1 AU output'],detail:'The 1-AU value is an ideal inverse-square extrapolation (504 × 5.7²), not a published Lucy operating rating at 1 AU.'},
+ {id:'sparkwing',name:'Sparkwing 600×965',mission:'Airbus / NASA catalog',kid:'A compact rigid solar panel that fits on smaller spacecraft and can be used in panel groups.',mass:6.2,watts:155,real:'155 W peak BOL per panel',assumed:[],detail:'Single 36-V panel. Mass ≈6.2 kg is derived from 155 W / 25 W kg⁻¹ in NASA’s catalog.'}
+ ],
+ propulsion:[
+ {id:'hydra',name:'DART Hydrazine',mission:'DART',kid:'A chemical thruster system that makes quick flight-path corrections using stored propellant.',hardwareMass:20,fuel:50,power:15,mode:'chemical',real:'50 kg hydrazine · 55.2 m/s dV99 (DART)',assumed:['hardware mass','power'],detail:'The real 55.2 m/s is a whole-DART reference, not an intrinsic rating of the thrusters.'},
+ {id:'next',name:'NEXT-C',mission:'DART technology demo',kid:'An ion engine that produces gentle thrust over long periods and needs substantial electricity.',hardwareMass:50,fuel:60,power:3480,thrust:0.137,isp:3137,mode:'electric',real:'137 mN · ≈3,480 W operating point',assumed:['complete installation mass','fuel as game configuration'],detail:'50 kg is a planning allowance for thruster and power processing; 60 kg xenon is a DART propellant reference.'},
+ {id:'nstar',name:'NSTAR',mission:'Dawn',kid:'An efficient ion thruster that builds up changes in spacecraft speed through long, gentle pushes.',hardwareMass:39,fuel:60,power:2600,thrust:0.091,isp:3200,mode:'electric',real:'≈91 mN · ≈2,600 W at high power',assumed:['full installation mass','fuel as game configuration'],detail:'NSTAR thruster is ≈8.9 kg; this model uses 39 kg for the installation and 60 kg xenon for demonstration.'}
+ ],
+ comms:[
+ {id:'rlsa',name:'RLSA HGA',mission:'DART',kid:'An X-band radio antenna that helps the spacecraft send pictures and mission data back to Earth.',mass:15,power:35,rate:3,real:'DART mission link: up to ≈3 Mbps',assumed:['mass','power'],detail:'The 3 Mbps value describes the full DART communications link in a mission phase; not an antenna-only speed.'},
+ {id:'lucyhga',name:'Lucy HGA',mission:'Lucy',kid:'A two-meter dish antenna that concentrates radio signals for long-distance communication.',mass:25,power:30,rate:.352,real:'2 m dish · mission link up to ≈0.352 Mbps',assumed:['mass','power'],detail:'Published link rate reflects Lucy mission conditions; mass and power are design allowances.'},
+ {id:'romanhga',name:'Roman Dual-Band HGA',mission:'Roman',kid:'A radio antenna system using two frequency bands to transfer very large scientific data sets.',mass:10.9,power:150,rate:500,real:'Roman mission link: up to 500 Mbps',assumed:['power','cross-mission link model'],detail:'500 Mbps is for the complete Roman link at its own distance and receiver conditions; cannot be treated as DART range capability.'}
+ ]
+};
+const selected={camera:'draco',power:'rosa',propulsion:'next',comms:'lucyhga'};
+try{const saved=JSON.parse(sessionStorage.getItem('asteroidWatch.selectedHardware')||'{}');for(const cat of ['camera','power','propulsion','comms']){if(parts[cat].some(p=>p.id===saved[cat]))selected[cat]=saved[cat]}}catch(_){}
+let active='camera',previous=null,changeCount=0;
+const getPart=cat=>parts[cat].find(x=>x.id===selected[cat]);
+function buildTabs(){ $('tabs').innerHTML=categories.map(c=>`<button class="cat-btn" role="tab" aria-selected="${active===c.id}" data-category="${c.id}" title="${c.sub}"><span class="symbol">${c.icon}</span>${c.label}</button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{active=b.dataset.category;buildTabs();buildChoices()}))}
+function buildChoices(){const list=parts[active];$('choices').innerHTML=list.map(p=>`<button class="part" type="button" aria-pressed="${selected[active]===p.id}" data-id="${p.id}"><div class="part-top"><strong>${p.name}</strong><span class="check">${selected[active]===p.id?'●':'○'}</span></div><small>${p.mission}</small><p>${p.kid}</p><span class="spec">${p.real}</span>${p.assumed.length?'<span class="source-key">◈ Includes model allowances</span>':'<span class="source-key" style="color:#a7c9b9">◈ Published / derived specs</span>'}</button>`).join('');$('choices').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(selected[active]===b.dataset.id)return;previous=calculate().scores;selected[active]=b.dataset.id;changeCount++;buildChoices();render()}))}
+function buildSummary(){ $('summary').innerHTML=categories.map(c=>`<div class="line"><span>${c.label}</span><b>${getPart(c.id).name}</b></div>`).join('')}
+function calculate(){
+ const cam=getPart('camera'),solar=getPart('power'),prop=getPart('propulsion'),com=getPart('comms');
+ const mass=350+cam.mass+solar.mass+prop.hardwareMass+prop.fuel+com.mass;
+ const required=45+cam.power+com.power+prop.power,available=solar.watts,margin=available-required;
+ const standby=available-(45+cam.power+com.power);
+ let dv=0,fuelUsed=0;
+ if(prop.mode==='chemical') {dv=55.2*615/mass;fuelUsed=Math.min(14,prop.fuel)}
+ else if(margin>=0){const burn=90*86400,mdot=prop.thrust/(prop.isp*9.80665);fuelUsed=Math.min(prop.fuel,burn*mdot);dv=prop.isp*9.80665*Math.log(mass/(mass-fuelUsed))}
+ const impactMass=mass-fuelUsed;
+ const pixels=150/(100000*cam.ifov*1e-6);
+ const detail=clamp(Math.log2(1+pixels)/Math.log2(1+607.287)*100);
+ const coverage=clamp(Math.sqrt(cam.fov/4)*100);
+ const targeting=standby>=0?Math.round(.80*detail+.20*coverage):0;
+ const data=standby>=0?Math.round(100*Math.log10(1+com.rate)/Math.log10(501)):0;
+ const scores={mass:Math.round(clamp(impactMass/750*100)),power:margin>0?Math.round(clamp(100*margin/(margin+1000))):0,targeting,course:Math.round(clamp(100*dv/(dv+90))),data};
+ return {mass,impactMass,available,required,margin,standby,dv,pixels,fuelUsed,rate:com.rate,scores,powerOK:margin>=0,standbyOK:standby>=0,massOK:mass<=750,correctionOK:dv>=35,cam,solar,prop,com};
+}
+function format(n,d=1){return n.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d})}
+function radar(){const r=calculate(),keys=['mass','power','targeting','course','data'],names=[['MASS',195,16],['POWER',336,115],['TARGETING',310,288],['CORRECTION',84,288],['DATA',53,115]],cx=195,cy=160,R=109;
+ const coords=(vs)=>vs.map((v,i)=>{const ang=-Math.PI/2+i*Math.PI*2/5;return `${(cx+R*v/100*Math.cos(ang)).toFixed(2)},${(cy+R*v/100*Math.sin(ang)).toFixed(2)}`}).join(' ');
+ let html='';for(let v=20;v<=100;v+=20)html+=`<polygon points="${coords([v,v,v,v,v])}" fill="none" stroke="#73938a" stroke-width="1" opacity=".32"/>`;
+ for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*2/5;html+=`<line x1="${cx}" y1="${cy}" x2="${cx+R*Math.cos(a)}" y2="${cy+R*Math.sin(a)}" stroke="#71958a" stroke-width="1" opacity=".4"/>`}
+ if(previous)html+=`<polygon points="${coords(keys.map(k=>previous[k]))}" fill="none" stroke="#9cb3b0" stroke-width="2" stroke-dasharray="5 5" opacity=".9"/>`;
+ html+=`<polygon points="${coords(keys.map(k=>r.scores[k]))}" fill="#b9f16e" fill-opacity=".18" stroke="#b9f16e" stroke-width="2.5" stroke-linejoin="round"/>`;
+ for(let i=0;i<5;i++){const k=keys[i],a=-Math.PI/2+i*Math.PI*2/5;html+=`<circle cx="${cx+R*r.scores[k]/100*Math.cos(a)}" cy="${cy+R*r.scores[k]/100*Math.sin(a)}" r="4.5" fill="#c9ff86" stroke="#142c24" stroke-width="1.5"/>`}
+ for(let i=0;i<5;i++){const n=names[i];html+=`<text class="radar-axis" text-anchor="middle" x="${n[1]}" y="${n[2]}">${n[0]} · ${r.scores[keys[i]]}</text>`}
+ html+='<text class="radar-num" x="202" y="167">0</text><text class="radar-num" x="203" y="94">60</text><text class="radar-num" x="203" y="54">100</text>';
+ $('radar').innerHTML=html;
+}
+function performance(){const r=calculate(),data=[['Mass','mass',`${format(r.impactMass,1)} kg at impact (estimated)`],['Power Margin','power',`${r.margin>=0?'+':''}${format(r.margin,1)} W in powered-cruise mode`],['Targeting Ability','targeting',`≈${format(r.pixels,0)} pixels across a 150 m asteroid at 100 km`],['Course Correction','course',`${format(r.dv,1)} m/s modeled available Δv`],['Data Return','data',`${format(r.rate,3)} Mbps original-mission reference benchmark`]];
+ $('performance').innerHTML=data.map(([label,key,raw])=>`<div class="performance-row"><strong>${label}</strong><span class="numbers">${r.scores[key]} / 100</span><div class="meter"><i style="width:${r.scores[key]}%"></i></div><div class="raw">${raw}</div></div>`).join('');
+}
+function readiness(){const r=calculate(),checks=[{ok:r.massOK,text:`Launch mass ${format(r.mass,1)} kg ${r.massOK?'≤':'>'} 750 kg planning limit`},{ok:r.standbyOK,text:`Standard avionics, camera and radio have sufficient standby power`},{ok:r.powerOK,text:`Powered-cruise systems ${r.powerOK?'fit':'exceed'} the modeled power budget`},{ok:r.correctionOK,text:`Course correction ${format(r.dv,1)} m/s ${r.correctionOK?'meets':'falls below'} 35 m/s illustrative requirement`}];
+ const good=checks.filter(c=>c.ok).length;const state=good===4?'ready':good>=2?'warn':'error';
+ $('status').className='readiness'+(state==='ready'?'':' '+state);$('status').textContent=good===4?'✓ DESIGN READY FOR FURTHER MISSION PLANNING':`⚠ ${4-good} ENGINEERING CHECK${4-good>1?'S':''} NEED ATTENTION`;
+ $('statusTitle').textContent=good===4?'Subsystems meet the planning checks':'Adjust your combination to meet the mission checks';
+ $('checklist').innerHTML=checks.map(c=>`<div style="color:${c.ok?'#c6e8be':'#f0b7a3'}">${c.ok?'✓':'!'} &nbsp; ${c.text}</div>`).join('');
+}
+function ship(){const solar=getPart('power'),prop=getPart('propulsion'),cam=getPart('camera'),com=getPart('comms');let panel='';
+ const cellgrid=(x,y,w,h)=>{let a=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#panelBlue)" stroke="#e8ca7a" stroke-width="4"/>`;for(let i=1;i<5;i++)a+=`<line x1="${x+w*i/5}" y1="${y}" x2="${x+w*i/5}" y2="${y+h}" stroke="#8dcae4" opacity=".5"/>`;for(let i=1;i<3;i++)a+=`<line x1="${x}" y1="${y+h*i/3}" x2="${x+w}" y2="${y+h*i/3}" stroke="#8dcae4" opacity=".5"/>`;return a};
+ if(solar.id==='lucy'){panel='<line x1="205" y1="172" x2="151" y2="151" stroke="#a1afb1" stroke-width="7"/><line x1="346" y1="172" x2="407" y2="153" stroke="#a1afb1" stroke-width="7"/>';for(const x of [106,438]){panel+=`<circle cx="${x}" cy="152" r="69" fill="url(#panelBlue)" stroke="#e7bd62" stroke-width="5"/>`;for(let i=0;i<12;i++){const a=i*Math.PI/6;panel+=`<line x1="${x}" y1="152" x2="${x+68*Math.cos(a)}" y2="${152+68*Math.sin(a)}" stroke="#8bbad5" opacity=".65"/>`}panel+=`<circle cx="${x}" cy="152" r="12" fill="#d6b870"/>`}}
+ else if(solar.id==='sparkwing'){panel='<line x1="205" y1="172" x2="163" y2="177" stroke="#95abb1" stroke-width="6"/><line x1="346" y1="172" x2="382" y2="177" stroke="#95abb1" stroke-width="6"/>'+cellgrid(90,152,73,47)+cellgrid(383,152,73,47)}
+ else {const wide=solar.id==='dawn',w=wide?155:128,h=wide?86:75;panel=`<line x1="205" y1="172" x2="${190-w}" y2="170" stroke="#a1adb0" stroke-width="7"/><line x1="346" y1="172" x2="${330+w}" y2="170" stroke="#a1adb0" stroke-width="7"/>`+cellgrid(190-w,128,w,h)+cellgrid(330,128,w,h)}
+ $('solarArt').innerHTML=panel;
+ $('cameraArt').innerHTML=`<path d="M244 114 L244 74 L261 63 L283 76 L283 104" fill="#b8c4b9" stroke="#e1e5ca" stroke-width="2"/><ellipse cx="263" cy="71" rx="${cam.id==='mapcam'?22:17}" ry="${cam.id==='mapcam'?15:21}" fill="#879e9e" stroke="#dee9d3" stroke-width="3"/><ellipse cx="263" cy="71" rx="${cam.id==='mapcam'?12:10}" ry="${cam.id==='mapcam'?8:13}" fill="url(#lens)"/>`;
+ $('antennaArt').innerHTML=com.id==='rlsa'?'<ellipse cx="384" cy="80" rx="30" ry="14" fill="#b7c5ac" stroke="#eaf2d3" stroke-width="3"/><path d="M355 80 L325 140" stroke="#a1aaa0" stroke-width="5"/><line x1="369" y1="80" x2="398" y2="80" stroke="#607c70" stroke-width="2"/>':`<path d="M347 144L385 99" stroke="#b1b9ae" stroke-width="6"/><path d="M355 72 Q396 122 428 61 Q399 47 355 72Z" fill="#bfcbbc" stroke="#e5ebd4" stroke-width="3"/><path d="M392 82L408 67" stroke="#526b64" stroke-width="4"/>`;
+ $('thrusterArt').innerHTML=`<g><path d="M229 227L218 267L247 270L255 244Z" fill="#596e72" stroke="#b7bec0" stroke-width="2"/><path d="M290 244L289 266L317 258L307 229Z" fill="#596e72" stroke="#b7bec0" stroke-width="2"/><path d="M224 268L206 306L247 275Z" fill="${prop.id==='hydra'?'#e7b87e':'#82dfe7'}" opacity=".7"/><path d="M294 271L285 308L312 264Z" fill="${prop.id==='hydra'?'#e7b87e':'#82dfe7'}" opacity=".65"/></g>`;
+ $('shipTag').textContent=`DART-INSPIRED / CONFIGURATION ${String(changeCount+1).padStart(3,'0')}`;
+}
+function render(){buildSummary();radar();performance();readiness();ship()}
+
+buildTabs();buildChoices();render();
+
+const design = $('design');
+const assembly = $('assembly');
+const assemblyTemplate = $('assemblyTemplate');
+const continueButton = $('goAssembly');
+let assembledConfiguration;
+
+function showDesign() {
+  assembly.hidden = true;
+  design.hidden = false;
+  continueButton.focus();
+}
+
+continueButton.addEventListener('click', () => {
+  try {
+    sessionStorage.setItem('asteroidWatch.selectedHardware', JSON.stringify(selected));
+  } catch (_) {}
+
+  const configuration = JSON.stringify(selected);
+  if (configuration !== assembledConfiguration) {
+    assembly.replaceChildren(assemblyTemplate.content.cloneNode(true));
+    setupAssembly({ ...selected }, assembly);
+    assembly.querySelector('#backToDesign').addEventListener('click', event => {
+      event.preventDefault();
+      showDesign();
+    });
+    assembly.querySelector('#editDesign').addEventListener('click', showDesign);
+    assembledConfiguration = configuration;
+  }
+
+  design.hidden = true;
+  assembly.hidden = false;
+  assembly.querySelector('h1').focus();
+  window.scrollTo(0, 0);
+});
+
+function setupAssembly(selected, assembly) {
+const names={
+ camera:{draco:'DRACO',polycam:'PolyCam',mapcam:'MapCam',llorri:'L’LORRI'},
+ power:{rosa:'ROSA',dawn:'Dawn Solar Arrays',lucy:'Lucy Solar Arrays',sparkwing:'Sparkwing 600×965'},
+ propulsion:{hydra:'DART Hydrazine',next:'NEXT-C',nstar:'NSTAR'},
+ comms:{rlsa:'RLSA HGA',lucyhga:'Lucy HGA',romanhga:'Roman Dual-Band HGA'}
+};
+const partToCategory={camera:'camera',solar:'power',thruster:'propulsion',antenna:'comms'};
+const installed=new Set();
+const $=(id)=>assembly.querySelector(`#${id}`);
+for(const [part,category] of Object.entries(partToCategory))assembly.querySelector(`[data-model="${part}"]`).textContent=names[category][selected[category]];
+// Change only the illustration appropriate to the already-selected model.
+if(selected.power==='lucy'){
+ $('arrayShapes').innerHTML='<circle cx="140" cy="232" r="52" fill="url(#bluePanel)" stroke="#edc776" stroke-width="4"/><circle cx="500" cy="232" r="52" fill="url(#bluePanel)" stroke="#edc776" stroke-width="4"/>'+[0,1,2,3,4,5].map(i=>{let a=i*Math.PI/3;return `<path d="M140 232L${140+52*Math.cos(a)} ${232+52*Math.sin(a)} M500 232L${500+52*Math.cos(a)} ${232+52*Math.sin(a)}" class="gridline"/>`}).join('');
+}else if(selected.power==='sparkwing'){
+ $('arrayShapes').innerHTML='<rect x="115" y="200" width="87" height="64" rx="3" fill="url(#bluePanel)" stroke="#edc776" stroke-width="4"/><rect x="438" y="200" width="87" height="64" rx="3" fill="url(#bluePanel)" stroke="#edc776" stroke-width="4"/><path d="M145 200V264M174 200V264M468 200V264M497 200V264M115 232H202M438 232H525" class="gridline"/>';
+}else if(selected.power==='dawn')$('arrayShapes').setAttribute('transform','translate(0,-11) scale(1,1.10)');
+if(selected.propulsion!=='hydra'){
+ $('plume1').setAttribute('fill','#8de7f2');$('plume2').setAttribute('fill','#8de7f2');
+}
+if(selected.comms==='rlsa')$('dishShape').setAttribute('d','M418 116Q459 98 499 116Q459 141 418 116Z');
+const stage=$('assemblyField');let activeDrag=null;const ignoreClick=new WeakSet();
+function socketPoint(part){const circle=assembly.querySelector(`[data-socket="${part}"] circle`);const r=circle.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,radius:Math.max(55,r.width/2+20)}}
+function updateHighlight(part,on){assembly.querySelector(`[data-socket="${part}"]`).classList.toggle('active',on)}
+function install(part){if(installed.has(part))return;installed.add(part);assembly.querySelector(`[data-part="${part}"]`).classList.add('done');assembly.querySelector(`[data-socket="${part}"]`).classList.add('done');$(`part-${part}`).classList.add('on');
+ const count=installed.size;$('progressLabel').textContent=`${String(count).padStart(2,'0')} / 04 INSTALLED`;$('progressFill').style.width=`${count*25}%`;const label={camera:'Camera',solar:'Solar arrays',thruster:'Thruster',antenna:'Antenna'}[part];
+ if(count===4){$('message').innerHTML='<strong>ASSEMBLY COMPLETE.</strong> All four systems have been attached to the spacecraft bus.';$('liveState').textContent='✓ ALL MODULES ATTACHED';$('liveState').classList.add('completion');$('ship').setAttribute('aria-label','DART-inspired spacecraft with camera, solar arrays, thruster and antenna installed');}
+ else {$('message').innerHTML=`<strong>${label} secured.</strong> ${4-count} module${4-count===1?'':'s'} remaining. Drag the next part into its matching socket.`;$('liveState').textContent=`● ${4-count} MOUNT${4-count===1?'':'S'} OPEN`;}
+}
+function pointerDown(e){if(e.button!==undefined&&e.button!==0)return;const card=e.currentTarget,part=card.dataset.part;ignoreClick.delete(card);if(installed.has(part))return;
+ activeDrag={part,card,id:e.pointerId,startX:e.clientX,startY:e.clientY,moved:false};card.setPointerCapture(e.pointerId);e.preventDefault();
+}
+function pointerMove(e){if(!activeDrag||activeDrag.id!==e.pointerId)return;const d=activeDrag;
+ if(!d.moved&&Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>8){d.moved=true;d.ghost=d.card.cloneNode(true);d.ghost.classList.add('drag-proxy');d.ghost.setAttribute('aria-hidden','true');assembly.append(d.ghost);d.card.classList.add('dragging')}
+ if(!d.moved)return;d.ghost.style.left=e.clientX+'px';d.ghost.style.top=e.clientY+'px';const target=socketPoint(d.part);updateHighlight(d.part,Math.hypot(target.x-e.clientX,target.y-e.clientY)<=target.radius);
+}
+function pointerUp(e){if(!activeDrag||activeDrag.id!==e.pointerId)return;const d=activeDrag;activeDrag=null;d.card.classList.remove('dragging');updateHighlight(d.part,false);if(d.ghost)d.ghost.remove();if(d.moved)ignoreClick.add(d.card);
+ if(!d.moved){install(d.part);return;}const target=socketPoint(d.part);if(Math.hypot(target.x-e.clientX,target.y-e.clientY)<=target.radius){install(d.part)}else{$('message').innerHTML='Almost! Drop the module on the <strong>matching glowing ring</strong>, or tap its card to install.';}
+}
+function pointerCancel(e){if(!activeDrag||activeDrag.id!==e.pointerId)return;const d=activeDrag;activeDrag=null;if(d.ghost)d.ghost.remove();d.card.classList.remove('dragging');updateHighlight(d.part,false)}
+for(const card of assembly.querySelectorAll('.module-card')){card.addEventListener('pointerdown',pointerDown);card.addEventListener('pointermove',pointerMove);card.addEventListener('pointerup',pointerUp);card.addEventListener('pointercancel',pointerCancel);card.addEventListener('click',()=>{if(ignoreClick.has(card)){ignoreClick.delete(card);return;}install(card.dataset.part)});}
+$('resetBtn').addEventListener('click',()=>{installed.clear();for(const part of Object.keys(partToCategory)){assembly.querySelector(`[data-part="${part}"]`).classList.remove('done');assembly.querySelector(`[data-socket="${part}"]`).classList.remove('done','active');$(`part-${part}`).classList.remove('on')} $('progressLabel').textContent='00 / 04 INSTALLED';$('progressFill').style.width='0';$('liveState').textContent='● FOUR MOUNTS OPEN';$('liveState').classList.remove('completion');$('message').innerHTML='Drag a module to its <strong>matching glowing socket</strong>. You can also click a part to snap it into place.';$('ship').setAttribute('aria-label','Central spacecraft bus with four empty attachment points: camera, solar arrays, thruster, and antenna')});
+}
+</script>
+</body>
+</html>
