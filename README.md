@@ -1,0 +1,26 @@
+# Asteroid Watch
+
+An educational planetary defense game for elementary school students. Players investigate a fictional asteroid, plan a DART-inspired spacecraft, and see whether their mission changes its path.
+
+## Project status
+
+- **Part 1: Observation and risk assessment** — playable prototype in [`observation-mvp.html`](observation-mvp.html). Players follow a decision tree, spend observation opportunities and time, and build an asteroid fact file.
+- **Part 2: Spacecraft design** — planned; not built yet.
+- **Part 3: Intercept and outcome** — planned; not built yet.
+- **Earlier prototype** — an earlier asteroid game is preserved in [`earlier-asteroid-prototype.html`](earlier-asteroid-prototype.html).
+
+The game scenario, time costs, and numerical results are illustrative. The first part links to NASA and JPL sources in its Science notes.
+
+## Run the prototype
+
+Open `observation-mvp.html` in a modern browser. No installation or build step is required. Fonts use Google Fonts; the page also has local fallback fonts.
+
+Alternatively, from the repository root, run `python3 -m http.server 8000`, then visit `http://localhost:8000/observation-mvp.html`.
+
+## Collaborate
+
+This repository is private. The owner must invite each teammate and the teammate must accept before accessing or forking it, subject to repository and organization settings. Teammates can work in their own branches or permitted private forks and open pull requests to combine changes.
+
+Suggested division: keep observation work in `observation-mvp.html`; create `part-2-spacecraft/` and `part-3-intercept/` for the other stages. Coordinate the data passed between stages before integrating them. The first prototype is currently a self-contained HTML file; it does not yet export a profile or connect to the later stages.
+
+Avoid committing credentials, local configuration, or personal information. The hosted Sites configuration is intentionally excluded from this repository.
