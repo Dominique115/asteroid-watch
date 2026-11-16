@@ -256,7 +256,7 @@ td.unk{color:#6f837e}
  .file-grid{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-</style><script src="undo.js"></script><style>.undo-button{position:fixed;left:12px;bottom:12px;z-index:999;background:#b9f16e;color:#102015;border:0;border-radius:8px;padding:12px;font-weight:bold}</style></head><body>
+</style></head><body>
 
 <header>
  <div class="brand"><span>✳</span> ASTEROID WATCH</div>
@@ -306,23 +306,6 @@ const tasks=[
 const T=id=>tasks.find(t=>t.id===id), I=id=>instruments.find(i=>i.id===id);
 
 try{const saved=JSON.parse(sessionStorage.getItem('asteroidWatch.observation')||'null');if(saved&&Array.isArray(saved.done)&&Number.isFinite(saved.time)){time=saved.time;done=saved.done;risk=1;radarWindow=!!saved.radarWindow;history=Array.isArray(saved.history)?saved.history:[];stage=3;seenHelp=true}}catch(_){}
-
-function saveObservationUndo() {
- const historyStack = JSON.parse(sessionStorage.getItem('asteroidWatch.undo') || '[]');
- const storage = Object.fromEntries(Object.keys(sessionStorage).filter(key => key.startsWith('asteroidWatch.') && key !== 'asteroidWatch.undo').map(key => [key, sessionStorage.getItem(key)]));
- historyStack.push({page:'observation-mvp.html', storage, state:{stage,time,done,risk,radarWindow,running,planned,history,seenHelp,introStep}});
- sessionStorage.setItem('asteroidWatch.undo', JSON.stringify(historyStack));
-}
-try {
- const restored = JSON.parse(sessionStorage.getItem('asteroidWatch.restore') || 'null');
- if (restored && typeof restored.stage !== 'undefined') {
-   stage = restored.stage ?? stage; time = restored.time ?? time; done = restored.done ?? done;
-   risk = restored.risk ?? risk; radarWindow = restored.radarWindow ?? radarWindow;
-   running = restored.running ?? []; planned = restored.planned ?? []; history = restored.history ?? [];
-   seenHelp = restored.seenHelp ?? true; introStep = restored.introStep ?? 0;
-   sessionStorage.removeItem('asteroidWatch.restore');
- }
-} catch (_) {}
 
 /* ---------- Helpers ---------- */
 const $=s=>document.querySelector(s);
@@ -525,18 +508,18 @@ function timeline(len){
  return `<div><div class="tl-head"><b>This round’s timeline · ${span} months</b><span>${items.map(x=>`${T(x.id).name} ${x.end}mo`).join(' · ')}</span></div><div class="track" style="--rows:${items.length}"><div class="axis"></div><div class="now" id="now"></div>${tickHtml}${lanes}</div></div>`}
 
 /* ---------- Actions ---------- */
-function observe(){saveObservationUndo();Sound.shutter();time-=6;risk=1;stage=1;fresh=['Path through space','Chance of hitting Earth','Possible arrival'];log('Follow-up pictures refined the orbit.');render()}
-function toCollection(){saveObservationUndo();stage=2;render();if(!seenHelp){seenHelp=true;setTimeout(showHelp,650)}}
+function observe(){Sound.shutter();time-=6;risk=1;stage=1;fresh=['Path through space','Chance of hitting Earth','Possible arrival'];log('Follow-up pictures refined the orbit.');render()}
+function toCollection(){stage=2;render();if(!seenHelp){seenHelp=true;setTimeout(showHelp,650)}}
 function showHelp(){openModal(`<div class="eyebrow">Data collection</div><h3>Collect clues before time runs out</h3><p>To design the right spacecraft, I need to know more about the asteroid — how big it is, what it’s made of, how it spins.</p><ul class="steps"><li><span>1</span><div>Tap a <b>hexagon</b> to see what the job does and what it tells us.</div></li><li><span>2</span><div>Each <b>instrument</b> can do <b>one job at a time</b>. Jobs on different instruments run together.</div></li><li><span>3</span><div>Add jobs to this round, then press <b>Start working</b>. Time jumps to the next result.</div></li><li><span>4</span><div>Every month counts — the spacecraft needs time too!</div></li></ul><div class="actions"><button class="btn" onclick="closeModal()">Got it</button></div>`)}
 function openJob(id){let t=T(id),st=status(t),inst=I(t.inst),r=running.find(x=>x.id===id);['busy','locked','short'].includes(st)?Sound.nope():Sound.soft();
  let why=reason(t);
  let btn=st==='available'?`<button class="btn" data-sfx="1" onclick="plan('${id}')">Add to this round</button>`:st==='planned'?`<button class="btn outline" data-sfx="1" onclick="unplan('${id}')">Remove from this round</button>`:'';
  openModal(`<div class="eyebrow">${inst.name}</div><h3>${t.name}</h3><p>${t.desc}</p><div class="facts"><div><small>TAKES</small><b>${t.cost} months</b></div><div><small>WE LEARN</small><b>${t.learn}</b></div><div><small>INSTRUMENT</small><b>${inst.short}</b></div><div><small>STATUS</small><b>${st==='working'?r.remaining+' months left':st==='done'?'Done':st==='planned'?'In this round':st==='available'?'Ready':'Not available now'}</b></div></div>${st==='done'?`<p><b style="color:var(--teal)">Result:</b> ${t.out}</p>`:''}${why?`<div class="why"><b>!</b><span>${why}</span></div>`:''}${st==='available'&&!inst.shared?'<p class="hint">The science team can run several calculations at the same time.</p>':''}<div class="actions">${btn}<button class="btn ghost" onclick="closeModal()">Close</button></div>`)}
-function plan(id){if(status(T(id))!=='available')return;saveObservationUndo();Sound.add();planned.push(id);closeModal();render()}
-function unplan(id){saveObservationUndo();Sound.remove();planned=planned.filter(x=>x!==id);closeModal();render()}
+function plan(id){if(status(T(id))!=='available')return;Sound.add();planned.push(id);closeModal();render()}
+function unplan(id){Sound.remove();planned=planned.filter(x=>x!==id);closeModal();render()}
 function startWorking(){
  if(busyAnim)return;
- saveObservationUndo();
+
  planned.forEach(id=>running.push({id,remaining:T(id).cost,start:elapsed()}));
  let span=Math.max(roundLength(),1);planned=[];
  let n=nextStop(false);if(n===null)return;
@@ -556,7 +539,7 @@ function advance(n){
  if(names.length){Sound.chime();log('NEW RESULT: '+names.map(t=>t.out).join(' · '));openModal(`<div class="eyebrow">${n} month${n===1?'':'s'} later</div><h3>New result${names.length>1?'s':''}!</h3>${names.map(t=>`<p><b>${t.name}:</b> ${t.out}</p>`).join('')}${names.map(t=>I(t.inst)).filter(i=>i.shared).length?`<p class="hint">${[...new Set(names.map(t=>I(t.inst)).filter(i=>i.shared).map(i=>'The '+i.short))].join(' and ')} is free again.</p>`:''}${opened?'<p><b>Also:</b> the asteroid is close enough now — the Goldstone radar can scan it.</p>':''}${running.length?`<p class="hint">Still working: ${running.map(r=>T(r.id).name+' ('+r.remaining+' mo left)').join(', ')}.</p>`:''}<div class="actions"><button class="btn" onclick="closeModal()">Choose next jobs</button></div>`)}
  else if(opened){Sound.chime();log('Radar window is now open.');openModal(`<div class="eyebrow">${n} months later</div><h3>The radar can see it now!</h3><p>The asteroid is close enough for the Goldstone radar to bounce radio waves off it.</p><div class="actions"><button class="btn" onclick="closeModal()">Got it</button></div>`)}
 }
-function goDesign(){saveObservationUndo();try{sessionStorage.setItem('asteroidWatch.observation',JSON.stringify({version:2,time,done,windowChoice:null,radarWindow,history,asteroid:{massRange:done.includes('model')?[0.25,0.55]:[0.15,0.75],dataCards:tasks.filter(t=>done.includes(t.id)).map(t=>({id:t.id,value:t.out}))}}))}catch(_){alert('Please allow browser storage to carry your mission to the next station.');return}playWarp(()=>location.href='part-2-spacecraft/index.html')}
+function goDesign(){try{sessionStorage.setItem('asteroidWatch.observation',JSON.stringify({version:2,time,done,windowChoice:null,radarWindow,history,asteroid:{massRange:done.includes('model')?[0.25,0.55]:[0.15,0.75],dataCards:tasks.filter(t=>done.includes(t.id)).map(t=>({id:t.id,value:t.out}))}}))}catch(_){alert('Please allow browser storage to carry your mission to the next station.');return}playWarp(()=>location.href='part-2-spacecraft/index.html')}
 function reset(){try{['observation','selectedHardware','launchResult','lab','design','undo','restore'].forEach(k=>sessionStorage.removeItem('asteroidWatch.'+k))}catch(_){}time=START;done=[];risk=0;radarWindow=false;running=[];planned=[];history=[];log('');stage=0;render()}
 
 /* ---------- Transition to the Spacecraft Design Lab (~4 s) ---------- */
