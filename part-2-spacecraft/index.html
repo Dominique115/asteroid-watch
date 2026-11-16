@@ -288,6 +288,7 @@ function showDesign() {
 
 continueButton.addEventListener('click', () => {
   try {
+    sessionStorage.removeItem('asteroidWatch.launchResult');
     sessionStorage.setItem('asteroidWatch.selectedHardware', JSON.stringify(selected));
     sessionStorage.setItem('asteroidWatch.design', JSON.stringify({version:1,hardware:{...selected},...predictDeflection(calculate(),selected),names:Object.fromEntries(categories.map(c=>[c.id,getPart(c.id).name]))}));
 

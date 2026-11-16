@@ -10,6 +10,8 @@ function undoMission() {
  if (!previous) return;
  for (const key of Object.keys(sessionStorage)) if (key.startsWith('asteroidWatch.') && key !== 'asteroidWatch.undo') sessionStorage.removeItem(key);
  for (const [key, value] of Object.entries(previous.storage)) sessionStorage.setItem(key, value);
+ // Returning to design starts a fresh launch attempt. Older snapshots may contain a result.
+ if (previous.page === 'part-2-spacecraft/index.html') sessionStorage.removeItem('asteroidWatch.launchResult');
  if (previous.state) sessionStorage.setItem('asteroidWatch.restore', JSON.stringify(previous.state));
  sessionStorage.setItem('asteroidWatch.undo', JSON.stringify(history));
  const root = location.pathname.includes('/part-2-spacecraft/') ? '../' : '';
