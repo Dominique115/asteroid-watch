@@ -35,8 +35,20 @@ button.onclick=()=>{
  screen.classList.add('go','hit'); button.textContent='Mission in progress…';
  setTimeout(()=>{
  const view=document.getElementById('orbitView');
- const path=won?'M80 150 C210 130 340 85 570 40':'M80 150 C210 130 340 120 570 150';
- view.innerHTML=`<svg viewBox="0 0 650 210"><text x="20" y="25" fill="#b9f16e">MISSION CONTROL · SIMULATED PATH</text><text x="20" y="48" fill="#dcebe5">${won ? "SUCCESS · NEW PATH MISSES EARTH" : "NOT ENOUGH DEFLECTION"}</text><circle cx="560" cy="150" r="17" fill="#69c3d4"/><text x="540" y="190" fill="#dcebe5">EARTH</text><path d="M80 150 C210 130 340 120 570 150" fill="none" stroke="#a6b6ae" stroke-dasharray="6 6"/><path d="${path}" fill="none" stroke="#b9f16e" stroke-width="3"/><circle r="7" fill="#f3c979" style="offset-path:path('${path}')" class="orbit-rock"/></svg>`;
+ const originalPath = 'M65 160 C200 145 350 140 560 150';
+ const changedPath = won
+   ? 'M65 160 C200 145 285 142 320 140 C400 135 470 60 575 35'
+   : originalPath;
+ view.innerHTML = `<svg viewBox="0 0 650 220" role="img" aria-label="${won ? 'The asteroid changes direction and misses Earth' : 'The asteroid remains on a path toward Earth'}">
+   <text x="20" y="25" fill="#b9f16e">MISSION CONTROL · SIMULATED PATH</text>
+   <text x="20" y="48" fill="#dcebe5">${won ? 'SUCCESS · THE ASTEROID MISSES EARTH' : 'THE ASTEROID IS STILL HEADING TOWARD EARTH'}</text>
+   <circle cx="560" cy="150" r="18" fill="#69c3d4"/>
+   <text x="537" y="194" fill="#dcebe5">EARTH</text>
+   <path d="${originalPath}" fill="none" stroke="#9caeaa" stroke-width="2" stroke-dasharray="7 6"/>
+   <text x="100" y="185" fill="#adbfba">Original path</text>
+   ${won ? `<path d="M320 140 C400 135 470 60 575 35" fill="none" stroke="#b9f16e" stroke-width="4"/><text x="425" y="48" fill="#b9f16e">New path</text><circle cx="320" cy="140" r="5" fill="#ffcb79"/><text x="290" y="120" fill="#ffcb79">Impact</text>` : ''}
+   <circle r="10" fill="#f3c979" stroke="#fff0cc" stroke-width="2"><animateMotion dur="5s" fill="freeze" path="${changedPath}"/></circle>
+ </svg>`;
  view.classList.add('show');
  setTimeout(()=>showResult(won),matchMedia('(prefers-reduced-motion: reduce)').matches?50:5000);
  },matchMedia('(prefers-reduced-motion: reduce)').matches?50:4200);
