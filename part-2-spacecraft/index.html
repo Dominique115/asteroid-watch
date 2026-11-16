@@ -34,6 +34,10 @@
 .assembly-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 @media (min-width: 701px) { #editDesign { display: none; } }
 }
+@media(min-width:701px){#design .grid{grid-template-columns:1fr 1fr}#design .result-panel{grid-column:auto}#design .result-panel .two{display:block}}
+.part:disabled,.part:disabled:hover{background:#192124;border:2px dashed #687475;color:#bbc2c2;filter:grayscale(1);opacity:.68;cursor:not-allowed;transform:none;box-shadow:none}
+#design .lab{margin-bottom:14px}#design .lab-head,#design .lab-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}#design .lab-head{justify-content:space-between}#design .lab-head h2{margin:0}#design .lab-head label{display:grid;gap:3px;width:min(220px,100%)}#labClock{width:100%;height:12px;accent-color:var(--lime)}#projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px;margin:10px 0}#projects label{display:grid;grid-template-columns:auto 1fr;align-content:start;gap:4px 8px;background:#152a30;border:1px solid #506765;border-radius:9px;padding:10px;cursor:pointer}#projects input{accent-color:var(--lime)}#projects small,#projects span{grid-column:2}#projects small{color:var(--mint)}#projects span,#researchNote{font-size:13px}#projects label:has(:checked){background:#243d33;border-color:var(--lime)}#design .lab-actions button{padding:8px 12px}#design .hero{padding:8px 0}#design .hero h1{font-size:28px}#design .hero p,#design .hero-chips{display:none}#design .part{min-height:unset}#design .part strong{font-size:15px}#design .part p,#design .instruction{font-size:13px}#design .part .spec{font-size:11px}#design .radar-wrap svg{max-height:260px;margin:auto}#design .radar-axis{font-size:14px}#design .grid{align-items:stretch}#design details summary{cursor:pointer;font-size:14px}#design .performance{margin:12px;border:1px solid #35504c;border-radius:8px;padding:10px}#design .scores-notice{margin:8px 16px}#design .category-tabs button{padding:6px}#design .section-body,#design .panel-head{padding:12px}#design .part:disabled{background:#202427;border:2px dashed #717779;filter:grayscale(1);opacity:.7;cursor:not-allowed}
+#design .upload{margin:12px 0;padding:12px;background:#0d1d23;border:1px dashed #58746b;border-radius:8px}#design .upload p{margin:7px 0 0;font-size:13px}#design .lab button:disabled{opacity:.58;cursor:default}#design .shell{max-width:1800px;padding-inline:2%}#design .grid>*{min-width:0}#design .lab{margin:0}#design #projects{grid-template-columns:repeat(2,minmax(0,1fr))}@media(min-width:1050px){#design .grid{grid-template-columns:minmax(0,1.18fr) minmax(0,.89fr) minmax(0,1fr);gap:12px}}@media(min-width:701px) and (max-width:1049px){#design .lab{grid-column:1/-1}}@media(max-width:420px){#design #projects{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -41,22 +45,14 @@
 <header class="site-head"><div class="head-inner"><div class="brand"><span class="brand-mark">✳</span> ASTEROID WATCH</div><div class="head-right">PLANETARY DEFENSE / TRAINING SIMULATION &nbsp; <a href="../observation-mvp.html">← OBSERVATION LAB</a></div></div></header>
 <main class="shell">
 <section class="hero"><div><div class="eyebrow" style="color:var(--lime)">● MISSION 02 / SPACECRAFT ENGINEERING</div><h1>Build the Impactor.</h1><p>Your team has identified a possible asteroid threat. Select real space-mission technology, build a DART-inspired spacecraft, and study how each engineering choice changes its performance.</p></div><div class="hero-chips"><span class="chip">4 SYSTEMS</span><span class="chip">14 REAL TECHNOLOGIES</span><span class="chip">144 DESIGN COMBINATIONS</span></div></section>
-<nav class="stages" aria-label="Mission stages"><span>01 ASTEROID INVESTIGATION</span><span class="active">02 SPACECRAFT DESIGN</span><span>03 ASSEMBLY</span><span>04 LAUNCH</span></nav><section id="observationBrief" style="margin:0 0 16px;padding:14px 18px;background:#152923;border:1px solid #496e52;border-radius:10px;color:#d3e7d7;font-size:12px;line-height:1.7"></section>
+<nav class="stages" aria-label="Mission stages"><span>01 ASTEROID INVESTIGATION</span><span class="active">02 SPACECRAFT DESIGN</span><span>03 ASSEMBLY</span><span>04 LAUNCH</span></nav>
 <div class="grid">
-<section class="panel" aria-labelledby="builderHeading"><div class="panel-head"><div><div class="eyebrow">ENGINEERING WORKBENCH</div><h2 id="builderHeading">Choose your hardware</h2></div><span class="step-tag">STEP 02</span></div><div class="section-body"><p class="instruction">Choose one component from each category. Watch the spacecraft and its five performance scores change as you experiment.</p><div class="category-tabs" id="tabs" role="tablist" aria-label="Hardware systems"></div><div class="choices" id="choices" role="group" aria-label="Hardware options"></div><div class="selected-stack"><div class="eyebrow">CURRENT SPACECRAFT CONFIGURATION</div><div id="summary"></div></div></div></section>
-<section class="panel"><div class="panel-head"><div><div class="eyebrow">ASSEMBLY BAY / LIVE PREVIEW</div><h2>Your DART-inspired spacecraft</h2></div><span class="step-tag">BUILD 01</span></div><div class="preview"><div class="preview-top"><span class="eyebrow" style="color:var(--lime)">● SYSTEMS ONLINE</span><span class="eyebrow">MODEL / NOT TO SCALE</span></div><svg id="shipSvg" viewBox="0 0 520 340" role="img" aria-label="Stylized assembled spacecraft with selected solar panels, camera, thruster and antenna">
-<defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe39c"/><stop offset=".52" stop-color="#bb9e50"/><stop offset="1" stop-color="#554827"/></linearGradient><linearGradient id="panelBlue"><stop stop-color="#3b6f8b"/><stop offset=".55" stop-color="#183b5e"/><stop offset="1" stop-color="#0a2446"/></linearGradient><radialGradient id="lens"><stop stop-color="#9cf6e9"/><stop offset=".4" stop-color="#307e9c"/><stop offset="1" stop-color="#111d30"/></radialGradient></defs>
-<ellipse cx="260" cy="174" rx="215" ry="104" transform="rotate(-12 260 174)" stroke="#9edbc0" stroke-width="1.5" stroke-dasharray="6 9" stroke-opacity=".37" fill="none"/>
-<g id="solarArt"></g><g id="antennaArt"></g><g id="thrusterArt"></g>
-<g id="bus"><path d="M205 131 L283 104 L346 143 L269 168 Z" fill="#e4c172" stroke="#f5dda4" stroke-width="2"/><path d="M205 131 L269 168 L269 247 L205 210Z" fill="#9f8446" stroke="#d9b66e" stroke-width="2"/><path d="M269 168 L346 143 L346 218 L269 247Z" fill="url(#gold)" stroke="#f4dba1" stroke-width="2"/><path d="M218 148 L252 165 L252 219 L218 201Z" fill="#806d46" stroke="#eed288"/><path d="M284 178 L328 164 L328 209 L284 225Z" fill="#c7a955" stroke="#fae8ab"/><path d="M289 182 L319 173 M289 196 L319 186 M289 209 L319 199" stroke="#796538" stroke-width="2"/><circle cx="280" cy="233" r="5" fill="#a4edb6"/></g>
-<g id="cameraArt"></g>
-<text x="25" y="46" class="spacecraft-label">ASTEROID WATCH · SPACECRAFT ASSEMBLY</text><text x="25" y="313" class="spacecraft-label" id="shipTag">DART-INSPIRED / CONFIGURATION 001</text>
-</svg><div class="preview-bottom"><span>⊕ EARTH ORBITAL DEFENSE</span><span class="live">● DESIGN SIMULATION</span></div></div><div class="mission-brief"><div class="eyebrow">MISSION READINESS</div><div class="brief-title" id="statusTitle">Evaluating design...</div><div id="status" class="readiness">Checking requirements...</div><div id="checklist" class="checks"></div><div id="hitChance" class="readiness" aria-live="polite"></div><p class="note">This game-only chance uses the design’s targeting and course-correction scores, with penalties for unmet engineering checks. It is an invented rule, not a NASA prediction. The observation fact file is shown for planning and does not change this chance yet.</p><p class="note">The spacecraft image is a stylized illustration. The feasibility checks use an educational planning model, with published NASA reference values wherever available.</p></div></section>
-<section class="panel result-panel"><div class="panel-head"><div><div class="eyebrow">LIVE PERFORMANCE / 0–100 POINTS</div><h2>Five-axis radar</h2></div><span class="step-tag">LIVE</span></div><div class="two"><div class="radar-wrap"><svg id="radar" viewBox="0 0 390 330" role="img" aria-label="Live five-axis radar chart for Mass, Power Margin, Targeting Ability, Course Correction, Data Return"></svg><div class="legend"><span><i class="swatch" style="background:var(--lime)"></i>Current design</span><span><i class="swatch" style="background:#809d98"></i>Previous selection</span></div></div><div class="performance" id="performance" aria-live="polite"></div></div><p class="scores-notice"><strong>Educational model:</strong> Radar values are normalized 0–100 <em>points</em>, not percentages, measured probabilities, or NASA-certified performance. Click “Science notes & sources” below to see published inputs and explicit assumptions.</p></section>
+<section class="panel" aria-labelledby="builderHeading"><div class="panel-head"><div><div class="eyebrow">ENGINEERING WORKBENCH</div><h2 id="builderHeading">Choose your hardware</h2></div><span class="step-tag">STEP 02</span></div><div class="section-body"><p class="instruction">Choose one component from each category. Watch the five performance scores change as you experiment.</p><div class="category-tabs" id="tabs" role="tablist" aria-label="Hardware systems"></div><div class="choices" id="choices" role="group" aria-label="Hardware options"></div><details class="selected-stack"><summary>Selected hardware</summary><div id="summary"></div></details></div></section>
+<section class="panel result-panel"><div class="panel-head"><div><div class="eyebrow">LIVE PERFORMANCE / 0–100 POINTS</div><h2>Five-axis radar</h2></div><span class="step-tag">LIVE</span></div><div class="two"><div class="radar-wrap"><strong id="forecast" aria-live="polite"></strong><svg id="radar" viewBox="0 0 390 330" role="img" aria-label="Live five-axis radar chart for Mass, Power Margin, Targeting Ability, Course Correction, Data Return"></svg><div class="legend"><span><i class="swatch" style="background:var(--lime)"></i>Current design</span><span><i class="swatch" style="background:#809d98"></i>Previous selection</span></div></div><details class="performance"><summary>See the five measurements</summary><div id="performance"></div></details></div><p class="scores-notice"><strong>Educational model:</strong> Radar values are normalized 0–100 <em>points</em>, not percentages, measured probabilities, or NASA-certified performance. Click “Science notes & sources” below to see published inputs and explicit assumptions.</p></section><section class="panel section-body lab"><div class="lab-head"><h2>Research Lab</h2><label><strong id="labTime"></strong><progress id="labClock" max="96" aria-label="Mission time remaining"></progress></label></div><div class="upload"><button type="button" class="cat-btn" id="upload">Upload observation fact file</button><p id="observationBrief" role="status"></p></div><div id="projects"></div><div class="lab-actions"><button id="research" class="cat-btn">Research selected parts</button><span id="researchNote" role="status">Teams work together. Only the longest project uses mission time.</span></div></section>
 </div>
 <section class="assembly-continue" style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin:24px 0 10px;padding:18px 20px;background:#152923;border:1px solid #496e52;border-radius:10px;flex-wrap:wrap"><div><div class="eyebrow" style="color:var(--lime)">NEXT STEP · PHYSICAL ASSEMBLY</div><div style="font-size:16px;font-weight:800;margin:6px 0">Ready to put the spacecraft together?</div><div style="font-size:11px;color:var(--muted)">Keep your four selected components and drag them onto the spacecraft bus.</div></div><button type="button" id="goAssembly" style="background:var(--lime);color:#142014;border:0;border-radius:7px;padding:13px 18px;font-weight:800;font-size:12px">Continue to assembly →</button></section>
 <section class="science"><details><summary>Science notes & sources — how the performance model works ↗</summary><p>This educational builder adapts technologies from different NASA missions. They were designed for different spacecraft, so installation compatibility is <strong>assumed for the game</strong>. Hardware names and indicated published technical specifications come from NASA/mission documentation. When mass, power or other data are unavailable, the calculator uses values clearly marked <strong>MODEL ASSUMPTION</strong>.</p>
-<ul><li><strong>Mission assumptions:</strong> fixed reference bus = 350 kg; bus operating power = 45 W; launch-mass planning cap = 750 kg; asteroid diameter = 150 m; camera range = 100 km; solar distance = 1 AU; available powered cruise = 90 days. These are hypothetical instructional settings, not the DART mission configuration.</li><li><strong>Mass:</strong> summed bus, selected equipment, and propulsion fuel; impact mass subtracts modeled propellant consumption. The mass radar score compares impact mass to a 750 kg planning scale, while launch feasibility is checked separately.</li><li><strong>Power Margin:</strong> nominal array output at 1 AU minus selected equipment demand in the powered-cruise mode. Lucy solar output is extrapolated from its distant-sun 504 W specification using ideal inverse-square illumination; this does not include degradation, thermal limits or electrical-bus caps.</li><li><strong>Targeting:</strong> geometric target size in pixels = asteroid diameter / (range × camera IFOV). A documented educational index combines image detail and field of view. It does <strong>not</strong> represent hit probability, optical sensitivity, signal-to-noise ratio or a validated autonomy system.</li><li><strong>Course Correction:</strong> hydrazine baseline based on DART's 55.2 m/s total reported dV99, scaled approximately by spacecraft mass. Electric propulsion uses published reference thrust/specific impulse and an assumed 90-day powered cruise with a simple rocket-equation calculation. Actual transfers, thrust schedules and rendezvous trajectories are outside this model.</li><li><strong>Data Return:</strong> uses each original mission's published link-rate benchmark as an educational index; distances, frequencies, ground station capabilities and transmitter powers differ. The score is <strong>not</strong> a cross-mission link-budget prediction.</li><li><strong>Normalization:</strong> five axes are a visual teaching tool for comparing designs under one set of assumptions, not a NASA performance certification. An Earth-impact avoidance verdict requires validated intercept and orbital-deflection modeling and is intentionally absent here.</li></ul>
+<ul><li><strong>Mission assumptions:</strong> fixed reference bus = 350 kg; bus operating power = 45 W; launch-mass planning cap = 750 kg; asteroid diameter = 70 m; camera range = 100 km; solar distance = 1 AU; available powered cruise = 90 days. These are hypothetical instructional settings, not the DART mission configuration.</li><li><strong>Mass:</strong> summed bus, selected equipment, and propulsion fuel; impact mass subtracts modeled propellant consumption. The mass radar score compares impact mass to a 750 kg planning scale, while launch feasibility is checked separately.</li><li><strong>Power Margin:</strong> nominal array output at 1 AU minus selected equipment demand in the powered-cruise mode. Lucy solar output is extrapolated from its distant-sun 504 W specification using ideal inverse-square illumination; this does not include degradation, thermal limits or electrical-bus caps.</li><li><strong>Targeting:</strong> geometric target size in pixels = asteroid diameter / (range × camera IFOV). A documented educational index combines image detail and field of view. It does <strong>not</strong> represent hit probability, optical sensitivity, signal-to-noise ratio or a validated autonomy system.</li><li><strong>Course Correction:</strong> hydrazine baseline based on DART's 55.2 m/s total reported dV99, scaled approximately by spacecraft mass. Electric propulsion uses published reference thrust/specific impulse and an assumed 90-day powered cruise with a simple rocket-equation calculation. Actual transfers, thrust schedules and rendezvous trajectories are outside this model.</li><li><strong>Data Return:</strong> uses each original mission's published link-rate benchmark as an educational index; distances, frequencies, ground station capabilities and transmitter powers differ. The score is <strong>not</strong> a cross-mission link-budget prediction.</li><li><strong>Normalization:</strong> five axes are a visual teaching tool for comparing designs under one set of assumptions, not a NASA performance certification. An Earth-impact avoidance verdict requires validated intercept and orbital-deflection modeling and is intentionally absent here.</li></ul>
 <p><strong>NASA and mission references:</strong><br>
 <a href="https://ntrs.nasa.gov/citations/20230015804" target="_blank" rel="noopener">NASA · Final DART Technical Report</a> ·
 <a href="https://doi.org/10.3847/psj/ad823a" target="_blank" rel="noopener">DART · DRACO camera measurements</a> ·
@@ -140,6 +136,7 @@
  <div class="footer-note">The four models were chosen in the previous design stage. This page is a hands-on assembly activity; equipment compatibility, power and trajectory calculations remain part of the design simulation. Visuals are simplified illustrations of a DART-inspired spacecraft. <a href="https://www.nasa.gov/wp-content/uploads/2023/08/pd-dart-fact-sheet.pdf" target="_blank" rel="noopener">NASA DART spacecraft reference ↗</a></div>
 </main>
 </template>
+<script src="mission.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id), clamp=(n,lo=0,hi=100)=>Math.min(hi,Math.max(lo,n));
@@ -175,12 +172,12 @@ const parts={
  {id:'romanhga',name:'Roman Dual-Band HGA',mission:'Roman',kid:'A radio antenna system using two frequency bands to transfer very large scientific data sets.',mass:10.9,power:150,rate:500,real:'Roman mission link: up to 500 Mbps',assumed:['power','cross-mission link model'],detail:'500 Mbps is for the complete Roman link at its own distance and receiver conditions; cannot be treated as DART range capability.'}
  ]
 };
-const selected={camera:'draco',power:'rosa',propulsion:'next',comms:'lucyhga'};
-try{const saved=JSON.parse(sessionStorage.getItem('asteroidWatch.selectedHardware')||'{}');for(const cat of ['camera','power','propulsion','comms']){if(parts[cat].some(p=>p.id===saved[cat]))selected[cat]=saved[cat]}}catch(_){}
+const selected={camera:'llorri',power:'dawn',propulsion:'nstar',comms:'lucyhga'};
+try{const saved=JSON.parse(sessionStorage.getItem('asteroidWatch.selectedHardware')||'{}');for(const cat of ['camera','power','propulsion','comms']){if(parts[cat].some(p=>p.id===saved[cat]) && !locked(saved[cat]))selected[cat]=saved[cat]}}catch(_){}
 let active='camera',previous=null,changeCount=0;
 const getPart=cat=>parts[cat].find(x=>x.id===selected[cat]);
 function buildTabs(){ $('tabs').innerHTML=categories.map(c=>`<button class="cat-btn" role="tab" aria-selected="${active===c.id}" data-category="${c.id}" title="${c.sub}"><span class="symbol">${c.icon}</span>${c.label}</button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{active=b.dataset.category;buildTabs();buildChoices()}))}
-function buildChoices(){const list=parts[active];$('choices').innerHTML=list.map(p=>`<button class="part" type="button" aria-pressed="${selected[active]===p.id}" data-id="${p.id}"><div class="part-top"><strong>${p.name}</strong><span class="check">${selected[active]===p.id?'●':'○'}</span></div><small>${p.mission}</small><p>${p.kid}</p><span class="spec">${p.real}</span>${p.assumed.length?'<span class="source-key">◈ Includes model allowances</span>':'<span class="source-key" style="color:#a7c9b9">◈ Published / derived specs</span>'}</button>`).join('');$('choices').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(selected[active]===b.dataset.id)return;previous=calculate().scores;selected[active]=b.dataset.id;changeCount++;buildChoices();render()}))}
+function buildChoices(){const list=parts[active];$('choices').innerHTML=list.map(p=>`<button class="part" type="button" aria-pressed="${selected[active]===p.id}" data-id="${p.id}" ${locked(p.id) ? 'disabled title="Research this part in the Lab"' : ''}><div class="part-top"><strong>${p.name}${locked(p.id) ? " · 🔒 Research in Lab" : ""}</strong><span class="check">${selected[active]===p.id?'●':'○'}</span></div><small>${p.mission}</small><p>${p.kid}</p><span class="spec">${p.real}</span>${p.assumed.length?'<span class="source-key">◈ Includes model allowances</span>':'<span class="source-key" style="color:#a7c9b9">◈ Published / derived specs</span>'}</button>`).join('');$('choices').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(locked(b.dataset.id)||selected[active]===b.dataset.id)return;previous=calculate().scores;selected[active]=b.dataset.id;changeCount++;buildChoices();render()}))}
 function buildSummary(){ $('summary').innerHTML=categories.map(c=>`<div class="line"><span>${c.label}</span><b>${getPart(c.id).name}</b></div>`).join('')}
 function calculate(){
  const cam=getPart('camera'),solar=getPart('power'),prop=getPart('propulsion'),com=getPart('comms');
@@ -191,7 +188,7 @@ function calculate(){
  if(prop.mode==='chemical') {dv=55.2*615/mass;fuelUsed=Math.min(14,prop.fuel)}
  else if(margin>=0){const burn=90*86400,mdot=prop.thrust/(prop.isp*9.80665);fuelUsed=Math.min(prop.fuel,burn*mdot);dv=prop.isp*9.80665*Math.log(mass/(mass-fuelUsed))}
  const impactMass=mass-fuelUsed;
- const pixels=150/(100000*cam.ifov*1e-6);
+ const pixels=70/(100000*cam.ifov*1e-6);
  const detail=clamp(Math.log2(1+pixels)/Math.log2(1+607.287)*100);
  const coverage=clamp(Math.sqrt(cam.fov/4)*100);
  const targeting=standby>=0?Math.round(.80*detail+.20*coverage):0;
@@ -199,8 +196,55 @@ function calculate(){
  const scores={mass:Math.round(clamp(impactMass/750*100)),power:margin>0?Math.round(clamp(100*margin/(margin+1000))):0,targeting,course:Math.round(clamp(100*dv/(dv+90))),data};
  return {mass,impactMass,available,required,margin,standby,dv,pixels,fuelUsed,rate:com.rate,scores,powerOK:margin>=0,standbyOK:standby>=0,massOK:mass<=750,correctionOK:dv>=35,cam,solar,prop,com};
 }
-function gameHitChance(r){const penalties=[r.massOK,r.standbyOK,r.powerOK,r.correctionOK].filter(ok=>!ok).length;return Math.round(clamp(10+.8*(.55*r.scores.targeting+.45*r.scores.course)-penalties*12,5,95))}
-function showObservation(){let data=null;try{data=JSON.parse(sessionStorage.getItem('asteroidWatch.observation')||'null')}catch(_){}const labels={infrared:'Width: 150–190 m',lightcurve:'Spin: 5–7 hours',spectroscopy:'Material: likely rocky',reflectivity:'Reflectivity: medium estimate',model:'Mass: 3–9 billion kg (rough estimate)',recon:'Surface: boulder-rich',radar:'Shape: irregular; path improved'};const box=$('observationBrief');if(!data||!Array.isArray(data.done)){box.innerHTML='<strong>Asteroid fact file not available.</strong> <a href="../observation-mvp.html">Start the investigation</a> to bring your discoveries here.';return}const evidence=data.done.filter(k=>labels[k]).map(k=>labels[k]);box.textContent='FROM YOUR ASTEROID FACT FILE · '+Math.floor(data.time/12)+' years '+(data.time%12)+' months remain · '+(evidence.length?evidence.join(' · '):'No extra observations collected; physical properties remain unknown.');}
+function locked(id) {
+ return projects.some(p => p.id === id) && !lab.researched.includes(id);
+}
+function showObservation() {
+ const clues = observation.asteroid?.dataCards || [];
+ const range = observation.asteroid?.massRange || [0.15, 0.75];
+ const hasFile = Array.isArray(observation.done) && !!readMission('observation', null);
+ const file = JSON.stringify([observation.asteroid || {}, observation.done]);
+ const uploaded = hasFile && lab.uploaded === file;
+ $('upload').disabled = uploaded || !hasFile;
+ $('upload').textContent = uploaded ? '✓ Fact file uploaded' : 'Upload observation fact file';
+ $('observationBrief').textContent = uploaded
+   ? ['Orbit follow-up', ...clues.map(c => c.value)].join(' · ')
+   : hasFile ? 'Your team’s orbit report and observations are ready.' : 'Visit Observation to collect a fact file.';
+ $('upload').onclick = () => {
+   lab.uploaded = file;
+   sessionStorage.setItem('asteroidWatch.lab', JSON.stringify(lab));
+   showObservation();
+ };
+ $('research').disabled = !uploaded;
+ $('labTime').textContent = monthsLeft() + ' months left';
+ $('labClock').value = monthsLeft();
+ $('projects').replaceChildren(...projects.map(project => {
+   const label = document.createElement('label');
+   const box = document.createElement('input');
+   box.type = 'checkbox'; box.value = project.id;
+   box.disabled = !uploaded || !locked(project.id) || project.months >= monthsLeft();
+   const name = document.createElement('strong');
+   name.textContent = project.name;
+   const duration = document.createElement('small');
+   duration.textContent = !locked(project.id) ? '✓ Researched' : project.months + ' months';
+   const benefit = document.createElement('span');
+   benefit.textContent = project.benefit;
+   label.append(box, name, duration, benefit);
+   return label;
+ }));
+}
+$('research').onclick = () => {
+ const ids = [...$('projects').querySelectorAll(':checked')].map(input => input.value);
+ if (!ids.length) return;
+ const cost = Math.max(...projects.filter(p => ids.includes(p.id)).map(p => p.months));
+ if (cost >= monthsLeft()) return;
+ observation.time -= cost;
+ sessionStorage.setItem("asteroidWatch.observation", JSON.stringify(observation));
+ lab.spent += cost; lab.researched.push(...ids);
+ sessionStorage.setItem('asteroidWatch.lab', JSON.stringify(lab));
+ showObservation(); buildChoices(); render();
+ $('researchNote').textContent = 'Research complete in ' + cost + ' months. Choose your new parts at the workbench.';
+};
 function format(n,d=1){return n.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d})}
 function radar(){const r=calculate(),keys=['mass','power','targeting','course','data'],names=[['MASS',195,16],['POWER',336,115],['TARGETING',310,288],['CORRECTION',84,288],['DATA',53,115]],cx=195,cy=160,R=109;
  const coords=(vs)=>vs.map((v,i)=>{const ang=-Math.PI/2+i*Math.PI*2/5;return `${(cx+R*v/100*Math.cos(ang)).toFixed(2)},${(cy+R*v/100*Math.sin(ang)).toFixed(2)}`}).join(' ');
@@ -213,32 +257,16 @@ function radar(){const r=calculate(),keys=['mass','power','targeting','course','
  html+='<text class="radar-num" x="202" y="167">0</text><text class="radar-num" x="203" y="94">60</text><text class="radar-num" x="203" y="54">100</text>';
  $('radar').innerHTML=html;
 }
-function performance(){const r=calculate(),data=[['Mass','mass',`${format(r.impactMass,1)} kg at impact (estimated)`],['Power Margin','power',`${r.margin>=0?'+':''}${format(r.margin,1)} W in powered-cruise mode`],['Targeting Ability','targeting',`≈${format(r.pixels,0)} pixels across a 150 m asteroid at 100 km`],['Course Correction','course',`${format(r.dv,1)} m/s modeled available Δv`],['Data Return','data',`${format(r.rate,3)} Mbps original-mission reference benchmark`]];
+function performance(){const r=calculate(),data=[['Mass','mass',`${format(r.impactMass,1)} kg at impact (estimated)`],['Power Margin','power',`${r.margin>=0?'+':''}${format(r.margin,1)} W in powered-cruise mode`],['Targeting Ability','targeting',`≈${format(r.pixels,0)} pixels across a 70 m asteroid at 100 km`],['Course Correction','course',`${format(r.dv,1)} m/s modeled available Δv`],['Data Return','data',`${format(r.rate,3)} Mbps original-mission reference benchmark`]];
  $('performance').innerHTML=data.map(([label,key,raw])=>`<div class="performance-row"><strong>${label}</strong><span class="numbers">${r.scores[key]} / 100</span><div class="meter"><i style="width:${r.scores[key]}%"></i></div><div class="raw">${raw}</div></div>`).join('');
 }
-function readiness(){const r=calculate(),checks=[{ok:r.massOK,text:`Launch mass ${format(r.mass,1)} kg ${r.massOK?'≤':'>'} 750 kg planning limit`},{ok:r.standbyOK,text:`Standard avionics, camera and radio have sufficient standby power`},{ok:r.powerOK,text:`Powered-cruise systems ${r.powerOK?'fit':'exceed'} the modeled power budget`},{ok:r.correctionOK,text:`Course correction ${format(r.dv,1)} m/s ${r.correctionOK?'meets':'falls below'} 35 m/s illustrative requirement`}];
- const good=checks.filter(c=>c.ok).length;const state=good===4?'ready':good>=2?'warn':'error';
- $('status').className='readiness'+(state==='ready'?'':' '+state);$('status').textContent=good===4?'✓ DESIGN READY FOR FURTHER MISSION PLANNING':`⚠ ${4-good} ENGINEERING CHECK${4-good>1?'S':''} NEED ATTENTION`;
- $('statusTitle').textContent=good===4?'Subsystems meet the planning checks':'Adjust your combination to meet the mission checks';
- $('checklist').innerHTML=checks.map(c=>`<div style="color:${c.ok?'#c6e8be':'#f0b7a3'}">${c.ok?'✓':'!'} &nbsp; ${c.text}</div>`).join('');
-}
-function ship(){const solar=getPart('power'),prop=getPart('propulsion'),cam=getPart('camera'),com=getPart('comms');let panel='';
- const cellgrid=(x,y,w,h)=>{let a=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#panelBlue)" stroke="#e8ca7a" stroke-width="4"/>`;for(let i=1;i<5;i++)a+=`<line x1="${x+w*i/5}" y1="${y}" x2="${x+w*i/5}" y2="${y+h}" stroke="#8dcae4" opacity=".5"/>`;for(let i=1;i<3;i++)a+=`<line x1="${x}" y1="${y+h*i/3}" x2="${x+w}" y2="${y+h*i/3}" stroke="#8dcae4" opacity=".5"/>`;return a};
- if(solar.id==='lucy'){panel='<line x1="205" y1="172" x2="151" y2="151" stroke="#a1afb1" stroke-width="7"/><line x1="346" y1="172" x2="407" y2="153" stroke="#a1afb1" stroke-width="7"/>';for(const x of [106,438]){panel+=`<circle cx="${x}" cy="152" r="69" fill="url(#panelBlue)" stroke="#e7bd62" stroke-width="5"/>`;for(let i=0;i<12;i++){const a=i*Math.PI/6;panel+=`<line x1="${x}" y1="152" x2="${x+68*Math.cos(a)}" y2="${152+68*Math.sin(a)}" stroke="#8bbad5" opacity=".65"/>`}panel+=`<circle cx="${x}" cy="152" r="12" fill="#d6b870"/>`}}
- else if(solar.id==='sparkwing'){panel='<line x1="205" y1="172" x2="163" y2="177" stroke="#95abb1" stroke-width="6"/><line x1="346" y1="172" x2="382" y2="177" stroke="#95abb1" stroke-width="6"/>'+cellgrid(90,152,73,47)+cellgrid(383,152,73,47)}
- else {const wide=solar.id==='dawn',w=wide?155:128,h=wide?86:75;panel=`<line x1="205" y1="172" x2="${190-w}" y2="170" stroke="#a1adb0" stroke-width="7"/><line x1="346" y1="172" x2="${330+w}" y2="170" stroke="#a1adb0" stroke-width="7"/>`+cellgrid(190-w,128,w,h)+cellgrid(330,128,w,h)}
- $('solarArt').innerHTML=panel;
- $('cameraArt').innerHTML=`<path d="M244 114 L244 74 L261 63 L283 76 L283 104" fill="#b8c4b9" stroke="#e1e5ca" stroke-width="2"/><ellipse cx="263" cy="71" rx="${cam.id==='mapcam'?22:17}" ry="${cam.id==='mapcam'?15:21}" fill="#879e9e" stroke="#dee9d3" stroke-width="3"/><ellipse cx="263" cy="71" rx="${cam.id==='mapcam'?12:10}" ry="${cam.id==='mapcam'?8:13}" fill="url(#lens)"/>`;
- $('antennaArt').innerHTML=com.id==='rlsa'?'<ellipse cx="384" cy="80" rx="30" ry="14" fill="#b7c5ac" stroke="#eaf2d3" stroke-width="3"/><path d="M355 80 L325 140" stroke="#a1aaa0" stroke-width="5"/><line x1="369" y1="80" x2="398" y2="80" stroke="#607c70" stroke-width="2"/>':`<path d="M347 144L385 99" stroke="#b1b9ae" stroke-width="6"/><path d="M355 72 Q396 122 428 61 Q399 47 355 72Z" fill="#bfcbbc" stroke="#e5ebd4" stroke-width="3"/><path d="M392 82L408 67" stroke="#526b64" stroke-width="4"/>`;
- $('thrusterArt').innerHTML=`<g><path d="M229 227L218 267L247 270L255 244Z" fill="#596e72" stroke="#b7bec0" stroke-width="2"/><path d="M290 244L289 266L317 258L307 229Z" fill="#596e72" stroke="#b7bec0" stroke-width="2"/><path d="M224 268L206 306L247 275Z" fill="${prop.id==='hydra'?'#e7b87e':'#82dfe7'}" opacity=".7"/><path d="M294 271L285 308L312 264Z" fill="${prop.id==='hydra'?'#e7b87e':'#82dfe7'}" opacity=".65"/></g>`;
- $('shipTag').textContent=`DART-INSPIRED / CONFIGURATION ${String(changeCount+1).padStart(3,'0')}`;
-}
-function render(){buildSummary();radar();performance();readiness();ship();$('hitChance').textContent='GAME SIMULATION: '+gameHitChance(calculate())+'% chance to hit the asteroid';}
+function render(){buildSummary();radar();performance();const forecast=predictDeflection(calculate(),selected); $('forecast').textContent=forecast.chance+'% chance to move the asteroid clear of Earth · '+forecast.buildMonths+' months to build + 10 to fly';}
 
 buildTabs();buildChoices();showObservation();render();
 
 const design = $('design');
 const assembly = $('assembly');
+
 const assemblyTemplate = $('assemblyTemplate');
 const continueButton = $('goAssembly');
 let assembledConfiguration;
@@ -252,13 +280,14 @@ function showDesign() {
 continueButton.addEventListener('click', () => {
   try {
     sessionStorage.setItem('asteroidWatch.selectedHardware', JSON.stringify(selected));
-    sessionStorage.setItem('asteroidWatch.design', JSON.stringify({version:1,hardware:{...selected},chance:gameHitChance(calculate()),names:Object.fromEntries(categories.map(c=>[c.id,getPart(c.id).name]))}));
-    sessionStorage.removeItem('asteroidWatch.launchResult');
+    sessionStorage.setItem('asteroidWatch.design', JSON.stringify({version:1,hardware:{...selected},...predictDeflection(calculate(),selected),names:Object.fromEntries(categories.map(c=>[c.id,getPart(c.id).name]))}));
+
   } catch (_) {}
 
   const configuration = JSON.stringify(selected);
   if (configuration !== assembledConfiguration) {
     assembly.replaceChildren(assemblyTemplate.content.cloneNode(true));
+
     setupAssembly({ ...selected }, assembly);
     assembly.querySelector('#backToDesign').addEventListener('click', event => {
       event.preventDefault();
