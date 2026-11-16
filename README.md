@@ -5,8 +5,8 @@ An educational planetary defense game for elementary school students. Players in
 ## Project status
 
 - **Part 1: Observation and risk assessment** — playable prototype in [`observation-mvp.html`](observation-mvp.html). Players follow a decision tree, spend observation opportunities and time, and build an asteroid fact file.
-- **Part 2: Spacecraft design** — planned; not built yet.
-- **Part 3: Intercept and outcome** — planned; not built yet.
+- **Part 2: Spacecraft design and assembly** — playable in [`part-2-spacecraft/index.html`](part-2-spacecraft/index.html).
+- **Part 3: Launch and intercept** — playable simulation in [`part-2-spacecraft/launch.html`](part-2-spacecraft/launch.html).
 - **Earlier prototype** — an earlier asteroid game is preserved in [`earlier-asteroid-prototype.html`](earlier-asteroid-prototype.html).
 
 The game scenario, time costs, and numerical results are illustrative. The first part links to NASA and JPL sources in its Science notes.
@@ -21,6 +21,6 @@ Alternatively, from the repository root, run `python3 -m http.server 8000`, then
 
 This repository is private. The owner must invite each teammate and the teammate must accept before accessing or forking it, subject to repository and organization settings. Teammates can work in their own branches or permitted private forks and open pull requests to combine changes.
 
-Suggested division: keep observation work in `observation-mvp.html`; create `part-2-spacecraft/` and `part-3-intercept/` for the other stages. Coordinate the data passed between stages before integrating them. The first prototype is currently a self-contained HTML file; it does not yet export a profile or connect to the later stages.
+Suggested division: keep observation work in `observation-mvp.html`; create `part-2-spacecraft/` and `part-3-intercept/` for the other stages. Coordinate the data passed between stages before integrating them. The observation page carries its fact file and remaining time to design using sessionStorage. The design shows a game-only hit probability, assembly requires all four parts, and launch uses that probability for a simulated hit or miss. The chance is an illustrative rule, not a real NASA prediction; observation details are shown as context and do not yet affect the chance. Use a local server for consistent browser storage.
 
 Avoid committing credentials, local configuration, or personal information. The hosted Sites configuration is intentionally excluded from this repository.
