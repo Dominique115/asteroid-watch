@@ -14,11 +14,11 @@ function monthsLeft() { return Math.max(0, observation.time); }
 function predictDeflection(stats, hardware) {
   const buildMonths = 3 * Object.keys(hardware).length;
   const matches = projects.filter(project => Object.values(hardware).includes(project.id)).length;
-  // A game score for this mission, calibrated so the complete DART design succeeds.
+  // A game score for this mission, with the complete DART design rated highest.
   const engineering = 0.09 * Math.min(stats.scores.targeting, stats.scores.course)
     + 0.01 * stats.scores.power;
   const chance = matches === projects.length
-    ? 100
+    ? 95
     : Math.round((38 + 13 * matches + engineering) * 10) / 10;
-  return { chance: matches === projects.length ? 100 : Math.min(99, chance), buildMonths };
+  return { chance: matches === projects.length ? 95 : Math.min(94, chance), buildMonths };
 }
